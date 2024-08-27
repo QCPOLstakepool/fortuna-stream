@@ -23,7 +23,6 @@ rustup update
 
 ## Installation
 ### Oura (2.0.0-alpha.2)
-#### Build from source
 ```
 cd $HOME/git
 git clone https://github.com/txpipe/oura.git
@@ -31,33 +30,16 @@ cd oura
 cargo install --path . --force
 ```
 
-#### Configuration
-Create file `$HOME/fortuna-stream/daemon.toml` with the following content (change `/home/relay/`):
-```
-[source]
-type = "N2C"
-socket_path = "/home/relay/cardano-my-node/db/socket"
-min_depth = 6
+Run Oura with configuration: [oura.toml](oura.toml) 
 
-[intersect]
-type = "Point"
-value = [133071753, "ca0e667649146da8141fcb92a92ddccb5db841c6cf9a2b534f0bf00e92dc3185"]
+### Python (3.12)
+TODO
 
-[cursor]
-type = "File"
-path = "/home/relay/fortuna-stream/oura.cursor"
+#### Create venv
+TODO
 
-[[filters]]
-type = "SplitBlock"
+#### Install
+`pip install -e .`
 
-[[filters]]
-type = "ParseCbor"
-
-[[filters]]
-type = "Select"
-skip_uncertain = true
-predicate = "asset1up3fehe0dwpuj4awgcuvl0348vnsexd573fjgq"
-
-[sink]
-type = "Stdout"
-```
+#### Run
+`python -m fortuna-stream-sinks 127.0.0.1 31065`
