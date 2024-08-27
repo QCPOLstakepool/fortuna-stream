@@ -42,7 +42,9 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                     block_number = int(outputs_datum[0]["datum"]["constr"]["fields"][0]["bigInt"]["int"])
 
         if mint_asset_amount > 0 and block_number > 0:
-            x_api.request("tweets", {"text": f"New block miner: {block_number}. Rewards: {mint_asset_amount / 100000000} $TUNA."}, method_override="POST")
+            x_response = x_api.request("tweets", {"text": f"New block mined: {block_number}. Rewards: {mint_asset_amount / 100000000} $TUNA."}, method_override="POST")
+
+            print(json.dumps(x_response, indent=4))
 
             self.send_response(204)
             self.end_headers()
