@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Post to X about various events concerning TUNA"
 authors = ["QCPOLstakepool <qcpolstakepool@gmail.com>"]
 readme = "README.md"
-packages = [{include = "fortuna-stream-sinks", from = "src"}]
+packages = [{include = "fortuna_stream_sinks", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
