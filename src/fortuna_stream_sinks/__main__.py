@@ -47,6 +47,9 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                     print("F")
                     block_number = int(outputs_datum[0]["datum"]["constr"]["fields"][0]["bigInt"]["int"])
 
+        print(mint_asset_amount)
+        print(block_number)
+
         if mint_asset_amount > 0 and block_number > 0:
             print("G")
             x_api.request("tweets", {"text": f"New block miner: {block_number}. Rewards: {mint_asset_amount / 100000000} $TUNA."}, method_override="POST")
