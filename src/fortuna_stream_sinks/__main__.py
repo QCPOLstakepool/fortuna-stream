@@ -31,7 +31,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
             if len(mint_assets_policy) == 1:
                 print("B")
-                mint_assets = list(filter(lambda mint: mint["name"] == "VFVOQQ====", mint_assets_policy[0]["assets"]))  # TODO decode
+                mint_assets = list(filter(lambda mint: mint["name"] == "VFVOQQ==", mint_assets_policy[0]["assets"]))  # TODO decode
 
                 if len(mint_assets) == 1:
                     print("C")
