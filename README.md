@@ -33,10 +33,19 @@ cargo install --path . --force
 Run Oura with configuration: [oura.toml](oura.toml) 
 
 ### Python (3.12)
-TODO
+```
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa                     (Press [ENTER])
+sudo apt update
+sudo apt install python3.12 python3.12-dev python3.12-venv     (Press [Y])
+```
 
 #### Create venv
-TODO
+```
+python3.12 -m venv .venv
+source .venv/bin/activate
+```
 
 #### Install
 `pip install -e .`
