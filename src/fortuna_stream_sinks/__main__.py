@@ -1,5 +1,6 @@
 import json
-import sys
+import logging
+import os
 
 import typer
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -8,6 +9,13 @@ from fortuna_stream_sinks.config import X_API_KEY
 from fortuna_stream_sinks.config import X_API_KEY_SECRET
 from fortuna_stream_sinks.config import X_ACCESS_TOKEN
 from fortuna_stream_sinks.config import X_ACCESS_TOKEN_SECRET
+
+logging.basicConfig(
+    format="%(asctime)s - %(name)-8s - %(levelname)-8s - %(message)s",
+    datefmt="%d-%b-%y %H:%M:%S",
+)
+logger = logging.getLogger("fortuna_stream_sinks")
+logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
 
 x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="2")
 
@@ -21,6 +29,8 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
     def post_mints(self):
         content_length = int(self.headers.get('Content-Length'))
         post_body_json = json.loads(self.rfile.read(content_length))
+
+        logger.debug(post_body_json)
 
         mint_asset_amount = -1
         block_number = -1
@@ -42,14 +52,13 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                     block_number = int(outputs_datum[0]["datum"]["constr"]["fields"][0]["bigInt"]["int"])
 
         if mint_asset_amount > 0 and block_number > 0:
+            logger.info(f"New block detected: {block_number} (rewards: {mint_asset_amount})")
             x_response = x_api.request("tweets", {"text": f"New block mined: {block_number}. Rewards: {mint_asset_amount / 100000000} $TUNA."}, method_override="POST")
 
-            print(x_response.text)
+            logger.debug(f"X response: {x_response.text}")
 
             self.send_response(204)
             self.end_headers()
-
-            sys.exit()
         else:
             self.bad_request()
 
