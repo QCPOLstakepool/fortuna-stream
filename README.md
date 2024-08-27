@@ -4,7 +4,7 @@ Twitter streams for the Cardano token TUNA
 ## Dependencies
 ```
 mkdir $HOME/fortuna-stream
-mkdir -p $HOME/git/oura
+mkdir $HOME/git
 ```
 
 ### apt
