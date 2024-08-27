@@ -26,32 +26,22 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         block_number = -1
 
         if "mint" in post_body_json:
-            print("A")
             mint_assets_policy = list(filter(lambda mint: mint["policyId"] == "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg==", post_body_json["mint"]))  # TODO decode
 
             if len(mint_assets_policy) == 1:
-                print("B")
                 mint_assets = list(filter(lambda mint: mint["name"] == "VFVOQQ==", mint_assets_policy[0]["assets"]))  # TODO decode
 
                 if len(mint_assets) == 1:
-                    print("C")
-                    mint_asset_amount = mint_assets[0]["mintCoin"]
+                    mint_asset_amount = int(mint_assets[0]["mintCoin"])
 
         if "outputs" in post_body_json:
-            print("D")
             outputs_datum = list(filter(lambda output: "datumHash" in output, post_body_json["outputs"]))
 
             if len(outputs_datum) == 1:
-                print("E")
                 if "datum" in outputs_datum[0] and "constr" in outputs_datum[0]["datum"] and "fields" in outputs_datum[0]["datum"]["constr"]:
-                    print("F")
                     block_number = int(outputs_datum[0]["datum"]["constr"]["fields"][0]["bigInt"]["int"])
 
-        print(mint_asset_amount)
-        print(block_number)
-
         if mint_asset_amount > 0 and block_number > 0:
-            print("G")
             x_api.request("tweets", {"text": f"New block miner: {block_number}. Rewards: {mint_asset_amount / 100000000} $TUNA."}, method_override="POST")
 
             self.send_response(204)
