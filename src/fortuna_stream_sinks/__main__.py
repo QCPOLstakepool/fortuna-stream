@@ -57,10 +57,11 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
             logger.debug(f"X response: {x_response.text}")
 
-            self.send_response(204)
+            self.send_response(201)
             self.end_headers()
         else:
-            self.bad_request()
+            self.send_response(204)
+            self.end_headers()
 
     def not_found(self):
         self.send_response(404)
