@@ -4,10 +4,10 @@ import sys
 import typer
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI
-from config import X_API_KEY
-from config import X_API_KEY_SECRET
-from config import X_ACCESS_TOKEN
-from config import X_ACCESS_TOKEN_SECRET
+from fortuna_stream_sinks.config import X_API_KEY
+from fortuna_stream_sinks.config import X_API_KEY_SECRET
+from fortuna_stream_sinks.config import X_ACCESS_TOKEN
+from fortuna_stream_sinks.config import X_ACCESS_TOKEN_SECRET
 
 x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="2")
 

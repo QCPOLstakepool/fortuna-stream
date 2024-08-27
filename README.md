@@ -51,4 +51,4 @@ source .venv/bin/activate
 `pip install -e .`
 
 #### Run
-`python -m fortuna-stream-sinks 127.0.0.1 31065`
+`python -m fortuna_stream_sinks 127.0.0.1 31065`
