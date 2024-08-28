@@ -5,6 +5,8 @@ import base64
 import binascii
 from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI
+from charset_normalizer.api import logger
+
 from fortuna_stream_sinks.config import X_API_KEY
 from fortuna_stream_sinks.config import X_API_KEY_SECRET
 from fortuna_stream_sinks.config import X_ACCESS_TOKEN
@@ -47,11 +49,15 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
             outputs = list(filter(lambda output: "assets" in output, post_body_json["outputs"]))
             for output in outputs:
                 outputs_assets = list(filter(lambda _output: "assets" in _output, output["assets"]))
+
                 for outputs_asset in outputs_assets:
-                    outputs_assets_assets = list(
-                        filter(lambda _output: "name" in _output and _output["name"] == "VFVOQQ==",
-                               outputs_asset["assets"]))
+                    outputs_assets_assets = list(filter(lambda _output: "name" in _output and _output["name"] == "VFVOQQ==", outputs_asset["assets"]))
+
                     if len(outputs_assets_assets) == 1:
+                        logger.debug(f"address={output["address"]}")
+                        logger.debug(f"address b64decode={base64.b64decode(output["address"])}")
+                        logger.debug(f"address hexlify={binascii.hexlify(base64.b64decode(output["address"]))}")
+                        logger.debug(f"address hexlify decode={binascii.hexlify(base64.b64decode(output["address"])).decode()}")
                         address = Process.run("bech32", binascii.hexlify(base64.b64decode(output["address"])).decode())
                         break
 
