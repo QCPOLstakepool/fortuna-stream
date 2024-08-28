@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import base64
+import binascii
 from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI
 from fortuna_stream_sinks.config import X_API_KEY
@@ -51,7 +52,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                         filter(lambda _output: "name" in _output and _output["name"] == "VFVOQQ==",
                                outputs_asset["assets"]))
                     if len(outputs_assets_assets) == 1:
-                        address = Process.run("bech32", base64.b64decode(output["address"]))
+                        address = Process.run("bech32", binascii.hexlify(base64.b64decode(output["address"])).decode())
                         break
 
                 if address is not None:
