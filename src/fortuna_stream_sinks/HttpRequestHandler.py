@@ -114,7 +114,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
     def post_conversion(post_body_json):
         address = HttpRequestHandler.get_conversion_output_address(post_body_json)
 
-        message = f"{address[:12]}...{address[-4:]} converted 123.456 V1 $TUNA."
+        message = f"{address} converted 123.456 V1 $TUNA."
 
         HttpRequestHandler.send_tweet(message)
 
