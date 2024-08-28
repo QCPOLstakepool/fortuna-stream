@@ -6,14 +6,12 @@ import binascii
 import sys
 from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI
-from charset_normalizer.api import logger
-from pycardano import VerificationKeyHash, Address
+from pycardano import VerificationKeyHash, Address, Network
 
 from fortuna_stream_sinks.config import X_API_KEY
 from fortuna_stream_sinks.config import X_API_KEY_SECRET
 from fortuna_stream_sinks.config import X_ACCESS_TOKEN
 from fortuna_stream_sinks.config import X_ACCESS_TOKEN_SECRET
-from fortuna_stream_sinks.Process import Process
 
 class HttpRequestHandler(BaseHTTPRequestHandler):
     logger = logging.getLogger("HttpRequestHandler")
@@ -46,25 +44,26 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
                 if len(mint_assets) == 1:
                     mint_asset_amount = int(mint_assets[0]["mintCoin"])
-        HttpRequestHandler.logger.debug(f"P={"outputs" in post_body_json}")
+
         if "outputs" in post_body_json:
             outputs = list(filter(lambda output: "assets" in output, post_body_json["outputs"]))
-            HttpRequestHandler.logger.debug(f"A={json.dumps(outputs)}")
+
             for output in outputs:
                 outputs_assets = list(filter(lambda _output: "assets" in _output, output["assets"]))
-                HttpRequestHandler.logger.debug(f"B={json.dumps(outputs_assets)}")
+
                 for outputs_asset in outputs_assets:
                     outputs_assets_assets = list(filter(lambda _output: "name" in _output and _output["name"] == "VFVOQQ==", outputs_asset["assets"]))
-                    HttpRequestHandler.logger.debug(f"C={json.dumps(outputs_assets_assets)}")
-                    if len(outputs_assets_assets) == 1:
-                        HttpRequestHandler.logger.debug(f"address={output["address"]}")
-                        HttpRequestHandler.logger.debug(f"address b64decode={base64.b64decode(output["address"])}")
-                        HttpRequestHandler.logger.debug(f"address hexlify={binascii.hexlify(base64.b64decode(output["address"]))}")
-                        HttpRequestHandler.logger.debug(f"address hexlify decode={binascii.hexlify(base64.b64decode(output["address"])).decode()}")
-                        address = Process.run(["bech32", "addr1"], binascii.hexlify(base64.b64decode(output["address"])).decode())
 
-                        payment_hash = VerificationKeyHash(bytes.fromhex(binascii.hexlify(base64.b64decode(output["address"])).decode()))
-                        HttpRequestHandler.logger.debug(f"pycardano={Address(payment_hash).encode()}")
+                    if len(outputs_assets_assets) == 1:
+                        address_hex = binascii.hexlify(base64.b64decode(output["address"])).decode()
+
+                        if len(address_hex) == 114:
+                            payment_hash = VerificationKeyHash(bytes.fromhex(address_hex[2:58]))
+                            stake_hash = VerificationKeyHash(bytes.fromhex(address_hex[58:]))
+                            address = Address(payment_part=payment_hash, staking_part=stake_hash, network=Network.MAINNET)
+                        elif len(address_hex) == 58:
+                            payment_hash = VerificationKeyHash(bytes.fromhex(address_hex[2:]))
+                            address = Address(payment_part=payment_hash, network=Network.MAINNET)
 
                         break
 
