@@ -95,8 +95,10 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
     @staticmethod
     def post_mint(post_body_json):
         address = HttpRequestHandler.get_mint_miner_address(post_body_json)
-        mint_asset_amount = HttpRequestHandler.get_mint_amount(post_body_json)
+        mint_amount = HttpRequestHandler.get_mint_amount(post_body_json)
         block_number, leading_zeroes, difficulty = HttpRequestHandler.get_mint_data(post_body_json)
+
+        HttpRequestHandler.logger.info(f"Mint: number={block_number}, address={address}, amount={mint_amount}, leading zeroes={leading_zeroes}, difficulty={difficulty}")
 
         with open("pools.json", "r") as pools_file:
             pools = json.load(pools_file)
@@ -104,18 +106,20 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         pool = list(filter(lambda _pool: _pool["address"] == address, pools))
 
         if len(pool) == 1:
-            message = f"Block {block_number} mined by pool {pool[0]["name"]} ({pool[0]["website"]}) (rewards: {mint_asset_amount / 100000000})."
+            message = f"Block {block_number} mined by pool {pool[0]["name"]} ({pool[0]["website"]}) (rewards: {mint_amount / 100000000})."
         else:
-            message = f"Block {block_number} mined by solo miner {address[:12]}...{address[-4:]} (rewards: {mint_asset_amount / 100000000})."
+            message = f"Block {block_number} mined by solo miner {address[:12]}...{address[-4:]} (rewards: {mint_amount / 100000000})."
 
         HttpRequestHandler.send_tweet(message)
 
     @staticmethod
     def post_conversion(post_body_json):
         address = HttpRequestHandler.get_conversion_output_address(post_body_json)
+        conversion_amount = HttpRequestHandler.get_conversion_amount(post_body_json)
 
-        message = f"{address} converted 123.456 V1 $TUNA."
+        HttpRequestHandler.logger.info(f"Conversion: address={address}, amount={conversion_amount}")
 
+        message = f"{address} converted {conversion_amount / 100000000} V1 $TUNA."
         HttpRequestHandler.send_tweet(message)
 
         sys.exit()
@@ -166,6 +170,13 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         return "unknown address"
 
     @staticmethod
+    def get_conversion_amount(post_body_json) -> int:
+        mint_assets_policy = list(filter(lambda mint: mint["policyId"] == "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg==", post_body_json["mint"]))  # TODO decode to asset1up3fehe0dwpuj4awgcuvl0348vnsexd573fjgq
+        mint_assets = list(filter(lambda mint: mint["name"] == "VFVOQQ==", mint_assets_policy[0]["assets"]))
+
+        return int(mint_assets[0]["mintCoin"])
+
+    @staticmethod
     def get_bech32_address(base64_encoded_hex: str) -> str:
         address_hex = binascii.hexlify(base64.b64decode(base64_encoded_hex)).decode()
 
@@ -196,8 +207,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
     @staticmethod
     def send_tweet(message: str) -> None:
-        HttpRequestHandler.logger.info(message)
-
+        pass
         #x_response = HttpRequestHandler.x_api.request("tweets", {"text": message}, method_override="POST")
 
         #HttpRequestHandler.logger.debug(f"X response: {x_response.text}")
