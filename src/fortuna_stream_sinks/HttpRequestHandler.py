@@ -7,6 +7,7 @@ import sys
 from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI
 from charset_normalizer.api import logger
+from pycardano import VerificationKeyHash, Address
 
 from fortuna_stream_sinks.config import X_API_KEY
 from fortuna_stream_sinks.config import X_API_KEY_SECRET
@@ -61,6 +62,10 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                         HttpRequestHandler.logger.debug(f"address hexlify={binascii.hexlify(base64.b64decode(output["address"]))}")
                         HttpRequestHandler.logger.debug(f"address hexlify decode={binascii.hexlify(base64.b64decode(output["address"])).decode()}")
                         address = Process.run(["bech32", "addr1"], binascii.hexlify(base64.b64decode(output["address"])).decode())
+
+                        payment_hash = VerificationKeyHash(bytes.fromhex(binascii.hexlify(base64.b64decode(output["address"])).decode()))
+                        HttpRequestHandler.logger.debug(f"pycardano={Address(payment_hash).encode()}")
+
                         break
 
                 if address is not None:
