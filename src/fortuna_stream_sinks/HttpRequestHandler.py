@@ -60,10 +60,10 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                         if len(address_hex) == 114:
                             payment_hash = VerificationKeyHash(bytes.fromhex(address_hex[2:58]))
                             stake_hash = VerificationKeyHash(bytes.fromhex(address_hex[58:]))
-                            address = Address(payment_part=payment_hash, staking_part=stake_hash, network=Network.MAINNET)
+                            address = Address(payment_part=payment_hash, staking_part=stake_hash, network=Network.MAINNET).encode()
                         elif len(address_hex) == 58:
                             payment_hash = VerificationKeyHash(bytes.fromhex(address_hex[2:]))
-                            address = Address(payment_part=payment_hash, network=Network.MAINNET)
+                            address = Address(payment_part=payment_hash, network=Network.MAINNET).encode()
 
                         break
 
