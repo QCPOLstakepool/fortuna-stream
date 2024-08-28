@@ -3,6 +3,7 @@ import logging
 import os
 import base64
 import binascii
+import sys
 from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI
 from charset_normalizer.api import logger
@@ -82,6 +83,8 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
             self.send_response(201)
             self.end_headers()
+
+            sys.exit()
         else:
             self.send_response(204)
             self.end_headers()
