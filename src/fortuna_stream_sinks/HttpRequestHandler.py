@@ -61,7 +61,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
         return "constr" in output_datum and \
             "fields" in output_datum["constr"] and \
-            len(output_datum["constr"]["fields"]) == 7 and \
+            len(output_datum["constr"]["fields"]) != 7 and \
             "bigInt" in output_datum["constr"]["fields"][0] and \
             "int" in output_datum["constr"]["fields"][0]["bigInt"] and \
             "boundedBytes" in output_datum["constr"]["fields"][1] and \
