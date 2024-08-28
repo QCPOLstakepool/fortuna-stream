@@ -3,9 +3,10 @@ import logging
 import os
 import base64
 import binascii
+import sys
 from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI
-from pycardano import VerificationKeyHash, Address, Network
+from pycardano import VerificationKeyHash, Address, Network, ScriptHash
 
 from fortuna_stream_sinks.config import X_API_KEY
 from fortuna_stream_sinks.config import X_API_KEY_SECRET
@@ -78,7 +79,18 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
     @staticmethod
     def is_conversion(post_body_json) -> bool:
-        return False
+        if "mint" not in post_body_json:
+            return False
+
+        mint_assets_policy = list(filter(lambda mint: mint["policyId"] == "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg==", post_body_json["mint"]))  # TODO decode to asset1up3fehe0dwpuj4awgcuvl0348vnsexd573fjgq
+        if len(mint_assets_policy) != 1:
+            return False
+
+        mint_assets = list(filter(lambda mint: mint["name"] == "VFVOQQ==", mint_assets_policy[0]["assets"]))
+        if len(mint_assets) != 1:
+            return False
+
+        return not HttpRequestHandler.is_mint(post_body_json)
 
     @staticmethod
     def post_mint(post_body_json):
@@ -96,15 +108,17 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         else:
             message = f"Block {block_number} mined by solo miner {address[:12]}...{address[-4:]} (rewards: {mint_asset_amount / 100000000})."
 
-        HttpRequestHandler.logger.info(message)
-
-        x_response = HttpRequestHandler.x_api.request("tweets", {"text": message}, method_override="POST")
-
-        HttpRequestHandler.logger.debug(f"X response: {x_response.text}")
+        HttpRequestHandler.send_tweet(message)
 
     @staticmethod
     def post_conversion(post_body_json):
-        pass
+        address = HttpRequestHandler.get_conversion_output_address(post_body_json)
+
+        message = f"{address[:12]}...{address[-4:]} converted 123.456 V1 $TUNA."
+
+        HttpRequestHandler.send_tweet(message)
+
+        sys.exit()
 
     @staticmethod
     def get_mint_miner_address(post_body_json) -> str:
@@ -117,15 +131,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                 outputs_assets_assets = list(filter(lambda _output: "name" in _output and _output["name"] == "VFVOQQ==", outputs_asset["assets"]))
 
                 if len(outputs_assets_assets) == 1:
-                    address_hex = binascii.hexlify(base64.b64decode(output["address"])).decode()
-
-                    if len(address_hex) == 114:
-                        payment_hash = VerificationKeyHash(bytes.fromhex(address_hex[2:58]))
-                        stake_hash = VerificationKeyHash(bytes.fromhex(address_hex[58:]))
-                        return Address(payment_part=payment_hash, staking_part=stake_hash, network=Network.MAINNET).encode()
-                    elif len(address_hex) == 58:
-                        payment_hash = VerificationKeyHash(bytes.fromhex(address_hex[2:]))
-                        return Address(payment_part=payment_hash, network=Network.MAINNET).encode()
+                    return HttpRequestHandler.get_bech32_address(output["address"])
 
         return "unknown address"
 
@@ -143,6 +149,59 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         return int(outputs_datum[0]["datum"]["constr"]["fields"][0]["bigInt"]["int"]), \
             int(outputs_datum[0]["datum"]["constr"]["fields"][3]["bigInt"]["int"]), \
             int(outputs_datum[0]["datum"]["constr"]["fields"][4]["bigInt"]["int"])
+
+    @staticmethod
+    def get_conversion_output_address(post_body_json) -> str:
+        outputs = list(filter(lambda output: "assets" in output and HttpRequestHandler.get_bech32_address(output["address"]) != "addr1wye5g0txzw8evz0gddc5lad6x5rs9ttaferkun96gr9wd9sj5y20t", post_body_json["outputs"]))
+
+        for output in outputs:
+            outputs_assets = list(filter(lambda _output: "assets" in _output and _output["policyId"] == "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg==", output["assets"]))
+
+            for outputs_asset in outputs_assets:
+                outputs_assets_assets = list(filter(lambda _output: "name" in _output and _output["name"] == "VFVOQQ==", outputs_asset["assets"]))
+
+                if len(outputs_assets_assets) == 1:
+                    return HttpRequestHandler.get_bech32_address(output["address"])
+
+        return "unknown address"
+
+    @staticmethod
+    def get_bech32_address(base64_encoded_hex: str) -> str:
+        address_hex = binascii.hexlify(base64.b64decode(base64_encoded_hex)).decode()
+
+        if len(address_hex) == 114:
+            if address_hex[0] == "1":
+                payment_hash = ScriptHash(bytes.fromhex(address_hex[2:58]))
+                stake_hash = VerificationKeyHash(bytes.fromhex(address_hex[58:]))
+            elif address_hex[0] == "2":
+                payment_hash = VerificationKeyHash(bytes.fromhex(address_hex[2:58]))
+                stake_hash = ScriptHash(bytes.fromhex(address_hex[58:]))
+            elif address_hex[0] == "3":
+                payment_hash = ScriptHash(bytes.fromhex(address_hex[2:58]))
+                stake_hash = ScriptHash(bytes.fromhex(address_hex[58:]))
+            else:
+                payment_hash = VerificationKeyHash(bytes.fromhex(address_hex[2:58]))
+                stake_hash = VerificationKeyHash(bytes.fromhex(address_hex[58:]))
+
+            return Address(payment_part=payment_hash, staking_part=stake_hash, network=Network.MAINNET).encode()
+        elif len(address_hex) == 58:
+            if address_hex[0] == "7":
+                payment_hash = ScriptHash(bytes.fromhex(address_hex[2:]))
+            else:
+                payment_hash = VerificationKeyHash(bytes.fromhex(address_hex[2:]))
+
+            return Address(payment_part=payment_hash, network=Network.MAINNET).encode()
+
+        return "unknown address"
+
+    @staticmethod
+    def send_tweet(message: str) -> None:
+        HttpRequestHandler.logger.info(message)
+
+        #x_response = HttpRequestHandler.x_api.request("tweets", {"text": message}, method_override="POST")
+
+        #HttpRequestHandler.logger.debug(f"X response: {x_response.text}")
+
 
     def created(self):
         self.send_response(201)
