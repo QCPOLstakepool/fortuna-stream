@@ -16,7 +16,7 @@ from fortuna_stream_sinks.config import X_ACCESS_TOKEN_SECRET
 class HttpRequestHandler(BaseHTTPRequestHandler):
     logger = logging.getLogger("HttpRequestHandler")
     logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
-    x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="2") if X_ENABLED else None
+    x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="1.1") if X_ENABLED else None
 
     def do_POST(self):
         if self.path == "/api/events":
@@ -208,7 +208,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         if HttpRequestHandler.x_api is None:
             HttpRequestHandler.logger.debug(f"X is disabled.")
         else:
-            x_response = HttpRequestHandler.x_api.request("tweets", {"text": message}, method_override="POST")
+            x_response = HttpRequestHandler.x_api.request("statuses/update", {"text": message})
 
             HttpRequestHandler.logger.debug(f"X response: {x_response.text}")
 
