@@ -79,7 +79,16 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                     difficulty = int(outputs_datum[0]["datum"]["constr"]["fields"][4]["bigInt"]["int"])
 
         if mint_asset_amount > 0 and block_number > 0:
-            message = f"Block {block_number} mined by {address} (rewards: {mint_asset_amount / 100000000})"
+            with open("pools.json", "r") as pools_file:
+                pools = json.load(pools_file)
+
+            pool = list(filter(lambda _pool: _pool["address"] == address, pools))
+
+            if len(pool) == 1:
+                message = f"Block {block_number} mined by pool {pool[0]["name"]} ({pool[0]["website"]}) (rewards: {mint_asset_amount / 100000000})."
+            else:
+                message = f"Block {block_number} mined by solo miner {address[:12]}...{address[-4:]} (rewards: {mint_asset_amount / 100000000})."
+
             HttpRequestHandler.logger.info(message)
 
             x_response = HttpRequestHandler.x_api.request("tweets", {"text": message}, method_override="POST")
@@ -88,8 +97,6 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
             self.send_response(201)
             self.end_headers()
-
-            sys.exit()
         else:
             self.send_response(204)
             self.end_headers()
