@@ -8,63 +8,136 @@
             "constr": {
               "fields": [
                 {
+                  "boundedBytes": "kAyvx8/KAwBZMTpF1AMAAA=="
+                },
+                {
                   "constr": {
                     "fields": [
                       {
-                        "constr": {
-                          "fields": [
-                            {
-                              "boundedBytes": "/JP2imSL7DXT2Gqo+V7Jbx61NL9epFzg9HviF4KIdVw="
-                            }
-                          ],
-                          "tag": 121
-                        }
+                        "boundedBytes": "EmQ3AmI+OAF+6OEryCQS2IX5qpLVn/pypW9COw=="
                       },
                       {
-                        "bigInt": {
-                          "int": "1"
-                        }
+                        "boundedBytes": "TUdQb29s"
                       }
                     ],
                     "tag": 121
                   }
                 },
                 {
-                  "bigInt": {
-                    "int": "31349"
+                  "array": {
+                    "items": [
+                      {
+                        "constr": {
+                          "fields": [
+                            {
+                              "bigInt": {
+                                "int": "0"
+                              }
+                            },
+                            {
+                              "boundedBytes": "OAwRG23NIzb3QD5g1vpAGQN/m+bs2pXBvMNaoiR/TZZ++APth+qhF1RhIfhp1Msmj8R2FTDvzFxfeAzF1I0dRI+FEaONQY7npPTP/J5kNtxIZ0A8f6z1w2Pq4Nfy8S2X/4ne0vhz/JeArS0EGHOXK7N0Xx88IApq/YqWc8DHOyM="
+                            }
+                          ],
+                          "tag": 121
+                        }
+                      },
+                      {
+                        "constr": {
+                          "fields": [
+                            {
+                              "bigInt": {
+                                "int": "0"
+                              }
+                            },
+                            {
+                              "boundedBytes": "e0rgkzBMv4KxZdNjEJzxEYcleOfw7IS4MZkaYUz2YD4lX2GGhuGJgT7L2KbuRlRwsOVdEKJxk66uaIAaivmnxWnI7D74rwuoI6QF70LN4MzT0dBAc/8yrleISoxuigN67lIZE3MNUdNPtQV+WbAJfOrWXnvbojdWwl/0PZ1gtTo="
+                            }
+                          ],
+                          "tag": 121
+                        }
+                      },
+                      {
+                        "constr": {
+                          "fields": [
+                            {
+                              "bigInt": {
+                                "int": "0"
+                              }
+                            },
+                            {
+                              "boundedBytes": "0hglit5xtF5YtW3l5C4MQcbH1O3aa5LyhEbHUWIUrM8NMFQLvijivebI2GOM9nteJ6Mo7qYZT/ACfjKntN46sUXU/U1zE9BUDwSXUSF/zr4VmXUqAcyGg2gtVk3PDHMChrLMjYsE+C6M0wAEtSNlt9IkU4wi4rXUEeI+yGaA4lA="
+                            }
+                          ],
+                          "tag": 121
+                        }
+                      },
+                      {
+                        "constr": {
+                          "fields": [
+                            {
+                              "bigInt": {
+                                "int": "0"
+                              }
+                            },
+                            {
+                              "boundedBytes": "dyxFc++mFgWE4aDdYeHF8KhT/IasN3thUzxWPg/APCh43euVWTUvEClX1VkENquxV12ige2mhjxp4m0rKp5fPdzYiIIOsb6tl52sxJfVHnWxMmhheSChjIzsKzay0oqmAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+                            }
+                          ],
+                          "tag": 121
+                        }
+                      }
+                    ]
                   }
                 }
               ],
-              "tag": 122
+              "tag": 121
             }
           },
-          "purpose": "REDEEMER_PURPOSE_MINT"
+          "purpose": "REDEEMER_PURPOSE_SPEND"
         },
-        "txHash": "WRJe3Opc4QTTFWPcT6Vp7apPV5chrXtPYJH53yDRUk0="
+        "txHash": "OVckV2dma+9bVGBCKSjrQJQrZ6e5C3n9/toVUwxe+QY="
       }
     ],
+    "collateralReturn": {
+      "address": "ARJkNwJiPjgBfujhK8gkEtiF+aqS1Z/6cqVvQjv2/OUHeM24LG7v8BLieA86neC0l8cEMRHfDcjz",
+      "assets": [
+        {
+          "assets": [
+            {
+              "name": "AA3hQGF0YWdvLmlv",
+              "outputCoin": "1"
+            }
+          ],
+          "policyId": "8P9Iu7e76dWaQPHOkOnp0P9QAuxI8jK0nKD7mg=="
+        }
+      ],
+      "coin": "5000000"
+    },
     "totalCollateral": "5000000"
   },
-  "fee": "404939",
-  "hash": "y8zz7Ga0sYK+rBqorztg5OORJQzLp/x8GDTVjjX61LY=",
+  "fee": "368835",
+  "hash": "a9/8vkLzH3SKwxez5uzcKcnJIaHTE1hDECpja3L7rhA=",
   "inputs": [
     {
       "outputIndex": 1,
+      "txHash": "dLuoxFiLhlUMAZqfFyTmT4BaweeXep9Z4HikNAwn5D4="
+    },
+    {
       "redeemer": {
         "datum": {
           "constr": {
             "fields": [
               {
-                "boundedBytes": "OreWY8pXAoC0M7RjFjsAAA=="
+                "boundedBytes": "kAyvx8/KAwBZMTpF1AMAAA=="
               },
               {
                 "constr": {
                   "fields": [
                     {
-                      "boundedBytes": "p/rcTBnm+1umS7f6adyXQINyxaQ48gpqTQGCPw=="
+                      "boundedBytes": "EmQ3AmI+OAF+6OEryCQS2IX5qpLVn/pypW9COw=="
                     },
                     {
-                      "boundedBytes": "Qmx1ZWZpbiB2MC4xMS4xIChjb21taXQgMzdjM2RkNykgYnkgQmxpbmsgTGFicw=="
+                      "boundedBytes": "TUdQb29s"
                     }
                   ],
                   "tag": 121
@@ -82,7 +155,7 @@
                             }
                           },
                           {
-                            "boundedBytes": "WTOk43/sIna0vr742fVPr5uZveHFx5VBsWsYNjtBRtxRHvgEdWqsEJKikIS+vyeV43LxepHGmfTSTv9LGdAPUcdMBwO8Gom1Ht5lLcxkCdnVT/8afTYUd8t9/DcGqnl+9QEnIN/880V8InbKipXw2coiYp+36b7bTwSKmK4f39Q="
+                            "boundedBytes": "OAwRG23NIzb3QD5g1vpAGQN/m+bs2pXBvMNaoiR/TZZ++APth+qhF1RhIfhp1Msmj8R2FTDvzFxfeAzF1I0dRI+FEaONQY7npPTP/J5kNtxIZ0A8f6z1w2Pq4Nfy8S2X/4ne0vhz/JeArS0EGHOXK7N0Xx88IApq/YqWc8DHOyM="
                           }
                         ],
                         "tag": 121
@@ -97,7 +170,7 @@
                             }
                           },
                           {
-                            "boundedBytes": "+JOYVKmrqG9AuMnUSTog+t+ptaa6NvtKOmmAhuubP4/0hjG1pmzBuWt9kSWyrTXKzi87YswnsJwI6m+DaC88mM1wk/DMVmvL7qphnwAN2sTUIxPsD6cmnyiKfQUCjNP2pbqEUK+Bu1DtWvSCPw/Lni6J8X3BaegkfAOvZ+MvbGs="
+                            "boundedBytes": "e0rgkzBMv4KxZdNjEJzxEYcleOfw7IS4MZkaYUz2YD4lX2GGhuGJgT7L2KbuRlRwsOVdEKJxk66uaIAaivmnxWnI7D74rwuoI6QF70LN4MzT0dBAc/8yrleISoxuigN67lIZE3MNUdNPtQV+WbAJfOrWXnvbojdWwl/0PZ1gtTo="
                           }
                         ],
                         "tag": 121
@@ -112,7 +185,7 @@
                             }
                           },
                           {
-                            "boundedBytes": "qOav5IKZH4uAOArujCdNxGAE2835Bgqqdtc45sF28uXi5c+dr+GvZysA9J4RN4MOp2l7aroj4woePTrI5WrVSsZAKf/pZEL0cPUy4CIAULouC2bV1T23DmC+14t+1cMWw+JbgmOtApSf6Ti+WkDrTr8pStoOwWIZinw0ECvOPpY="
+                            "boundedBytes": "0hglit5xtF5YtW3l5C4MQcbH1O3aa5LyhEbHUWIUrM8NMFQLvijivebI2GOM9nteJ6Mo7qYZT/ACfjKntN46sUXU/U1zE9BUDwSXUSF/zr4VmXUqAcyGg2gtVk3PDHMChrLMjYsE+C6M0wAEtSNlt9IkU4wi4rXUEeI+yGaA4lA="
                           }
                         ],
                         "tag": 121
@@ -127,28 +200,10 @@
                             }
                           },
                           {
-                            "boundedBytes": "GyLE7k0+DhRbpx2cznpcg4Vz3G/D05tyBGQnciIJK6XqEHdFptPfvTuojaye+VWpWl+KeE2+Zr+swqtyT3LSodUQAGXB5S2qzcUWvteR7C4JEd200xEyc8vpaDvhhkR8ezZnGLbT/MXFyJUJBJ09SR4K8rEipfeQbmtRfDUAMHY="
+                            "boundedBytes": "dyxFc++mFgWE4aDdYeHF8KhT/IasN3thUzxWPg/APCh43euVWTUvEClX1VkENquxV12ige2mhjxp4m0rKp5fPdzYiIIOsb6tl52sxJfVHnWxMmhheSChjIzsKzay0oqmAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
                           }
                         ],
                         "tag": 121
-                      }
-                    },
-                    {
-                      "constr": {
-                        "fields": [
-                          {
-                            "bigInt": {
-                              "int": "0"
-                            }
-                          },
-                          {
-                            "boundedBytes": "wOPretQz03NjpzLaAutsGZ8m0t0XThuFiSGpwCref3I="
-                          },
-                          {
-                            "boundedBytes": "gmkYPWdJPyF6vTjP12LuGb0ubQ4uvbwNUuEpnGzFM/g="
-                          }
-                        ],
-                        "tag": 123
                       }
                     }
                   ]
@@ -160,51 +215,11 @@
         },
         "purpose": "REDEEMER_PURPOSE_SPEND"
       },
-      "txHash": "/JP2imSL7DXT2Gqo+V7Jbx61NL9epFzg9HviF4KIdVw="
-    },
-    {
-      "redeemer": {
-        "datum": {
-          "constr": {
-            "fields": [
-              {
-                "constr": {
-                  "fields": [
-                    {
-                      "constr": {
-                        "fields": [
-                          {
-                            "boundedBytes": "/JP2imSL7DXT2Gqo+V7Jbx61NL9epFzg9HviF4KIdVw="
-                          }
-                        ],
-                        "tag": 121
-                      }
-                    },
-                    {
-                      "bigInt": {
-                        "int": "1"
-                      }
-                    }
-                  ],
-                  "tag": 121
-                }
-              },
-              {
-                "bigInt": {
-                  "int": "31349"
-                }
-              }
-            ],
-            "tag": 122
-          }
-        },
-        "purpose": "REDEEMER_PURPOSE_MINT"
-      },
-      "txHash": "/JP2imSL7DXT2Gqo+V7Jbx61NL9epFzg9HviF4KIdVw="
+      "txHash": "vk7x+UovmskL59+G2OQBzK4Otc5T43PrWOrD/KrUPc8="
     },
     {
       "outputIndex": 2,
-      "txHash": "/JP2imSL7DXT2Gqo+V7Jbx61NL9epFzg9HviF4KIdVw="
+      "txHash": "vk7x+UovmskL59+G2OQBzK4Otc5T43PrWOrD/KrUPc8="
     }
   ],
   "mint": [
@@ -216,11 +231,11 @@
         },
         {
           "mintCoin": "-1",
-          "name": "Q09VTlRFUnp1"
+          "name": "Q09VTlRFUnqm"
         },
         {
           "mintCoin": "1",
-          "name": "Q09VTlRFUnp2"
+          "name": "Q09VTlRFUnqn"
         }
       ],
       "policyId": "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg=="
@@ -228,13 +243,13 @@
   ],
   "outputs": [
     {
-      "address": "Aaf63EwZ5vtbpku3+mncl0CDcsWkOPIKak0Bgj+HGTjQe801iHZD/yZZadpZyoEmUKOzALZKBx/6",
+      "address": "ARJkNwJiPjgBfujhK8gkEtiF+aqS1Z/6cqVvQjv2/OUHeM24LG7v8BLieA86neC0l8cEMRHfDcjz",
       "assets": [
         {
           "assets": [
             {
               "name": "VFVOQQ==",
-              "outputCoin": "1060000000000"
+              "outputCoin": "10000000000"
             }
           ],
           "policyId": "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg=="
@@ -248,7 +263,7 @@
         {
           "assets": [
             {
-              "name": "Q09VTlRFUnp2",
+              "name": "Q09VTlRFUnqn",
               "outputCoin": "1"
             },
             {
@@ -265,11 +280,11 @@
           "fields": [
             {
               "bigInt": {
-                "int": "31350"
+                "int": "31399"
               }
             },
             {
-              "boundedBytes": "AAAAAAA0/3doSxOKomzFv623O8nqr0Ti6Cq43+hPtGo="
+              "boundedBytes": "AAAAAAAFeGmFVqMeiPlbpfaBnlu95LxdVB1KkA9h+fM="
             },
             {
               "bigInt": {
@@ -283,46 +298,49 @@
             },
             {
               "bigInt": {
-                "int": "10239000"
+                "int": "19572000"
               }
             },
             {
               "bigInt": {
-                "int": "1724794017000"
+                "int": "1724803350000"
               }
             },
             {
-              "boundedBytes": "hPk4k/3IcFU4ZgKzbdjwVfaweLIM/hT6QVb5IybhSjY="
+              "boundedBytes": "B0H4SjZbqgyQveXYmp9o355Fug7jP/1qKAXlFK3pBH8="
             }
           ],
           "tag": 121
         }
       },
-      "datumHash": "nJMSkV+NVe/zvwEK+0GpJrl8lAzLcBrQux7Ryu94WXk="
+      "datumHash": "p8LMwdauQgJ8cn6sp8Wasvi9YgAOQZNciCpSySff/fY="
     },
     {
-      "address": "Aaf63EwZ5vtbpku3+mncl0CDcsWkOPIKak0Bgj+HGTjQe801iHZD/yZZadpZyoEmUKOzALZKBx/6",
-      "coin": "162904784"
+      "address": "ARJkNwJiPjgBfujhK8gkEtiF+aqS1Z/6cqVvQjv2/OUHeM24LG7v8BLieA86neC0l8cEMRHfDcjz",
+      "coin": "66676111"
     }
   ],
   "referenceInputs": [
     {
       "outputIndex": 1,
+      "txHash": "gIdIKa+yyzTiPSgtdjtBnibp+5dv6KcETuu99lMSFLc="
+    },
+    {
       "redeemer": {
         "datum": {
           "constr": {
             "fields": [
               {
-                "boundedBytes": "OreWY8pXAoC0M7RjFjsAAA=="
+                "boundedBytes": "kAyvx8/KAwBZMTpF1AMAAA=="
               },
               {
                 "constr": {
                   "fields": [
                     {
-                      "boundedBytes": "p/rcTBnm+1umS7f6adyXQINyxaQ48gpqTQGCPw=="
+                      "boundedBytes": "EmQ3AmI+OAF+6OEryCQS2IX5qpLVn/pypW9COw=="
                     },
                     {
-                      "boundedBytes": "Qmx1ZWZpbiB2MC4xMS4xIChjb21taXQgMzdjM2RkNykgYnkgQmxpbmsgTGFicw=="
+                      "boundedBytes": "TUdQb29s"
                     }
                   ],
                   "tag": 121
@@ -340,7 +358,7 @@
                             }
                           },
                           {
-                            "boundedBytes": "WTOk43/sIna0vr742fVPr5uZveHFx5VBsWsYNjtBRtxRHvgEdWqsEJKikIS+vyeV43LxepHGmfTSTv9LGdAPUcdMBwO8Gom1Ht5lLcxkCdnVT/8afTYUd8t9/DcGqnl+9QEnIN/880V8InbKipXw2coiYp+36b7bTwSKmK4f39Q="
+                            "boundedBytes": "OAwRG23NIzb3QD5g1vpAGQN/m+bs2pXBvMNaoiR/TZZ++APth+qhF1RhIfhp1Msmj8R2FTDvzFxfeAzF1I0dRI+FEaONQY7npPTP/J5kNtxIZ0A8f6z1w2Pq4Nfy8S2X/4ne0vhz/JeArS0EGHOXK7N0Xx88IApq/YqWc8DHOyM="
                           }
                         ],
                         "tag": 121
@@ -355,7 +373,7 @@
                             }
                           },
                           {
-                            "boundedBytes": "+JOYVKmrqG9AuMnUSTog+t+ptaa6NvtKOmmAhuubP4/0hjG1pmzBuWt9kSWyrTXKzi87YswnsJwI6m+DaC88mM1wk/DMVmvL7qphnwAN2sTUIxPsD6cmnyiKfQUCjNP2pbqEUK+Bu1DtWvSCPw/Lni6J8X3BaegkfAOvZ+MvbGs="
+                            "boundedBytes": "e0rgkzBMv4KxZdNjEJzxEYcleOfw7IS4MZkaYUz2YD4lX2GGhuGJgT7L2KbuRlRwsOVdEKJxk66uaIAaivmnxWnI7D74rwuoI6QF70LN4MzT0dBAc/8yrleISoxuigN67lIZE3MNUdNPtQV+WbAJfOrWXnvbojdWwl/0PZ1gtTo="
                           }
                         ],
                         "tag": 121
@@ -370,7 +388,7 @@
                             }
                           },
                           {
-                            "boundedBytes": "qOav5IKZH4uAOArujCdNxGAE2835Bgqqdtc45sF28uXi5c+dr+GvZysA9J4RN4MOp2l7aroj4woePTrI5WrVSsZAKf/pZEL0cPUy4CIAULouC2bV1T23DmC+14t+1cMWw+JbgmOtApSf6Ti+WkDrTr8pStoOwWIZinw0ECvOPpY="
+                            "boundedBytes": "0hglit5xtF5YtW3l5C4MQcbH1O3aa5LyhEbHUWIUrM8NMFQLvijivebI2GOM9nteJ6Mo7qYZT/ACfjKntN46sUXU/U1zE9BUDwSXUSF/zr4VmXUqAcyGg2gtVk3PDHMChrLMjYsE+C6M0wAEtSNlt9IkU4wi4rXUEeI+yGaA4lA="
                           }
                         ],
                         "tag": 121
@@ -385,28 +403,10 @@
                             }
                           },
                           {
-                            "boundedBytes": "GyLE7k0+DhRbpx2cznpcg4Vz3G/D05tyBGQnciIJK6XqEHdFptPfvTuojaye+VWpWl+KeE2+Zr+swqtyT3LSodUQAGXB5S2qzcUWvteR7C4JEd200xEyc8vpaDvhhkR8ezZnGLbT/MXFyJUJBJ09SR4K8rEipfeQbmtRfDUAMHY="
+                            "boundedBytes": "dyxFc++mFgWE4aDdYeHF8KhT/IasN3thUzxWPg/APCh43euVWTUvEClX1VkENquxV12ige2mhjxp4m0rKp5fPdzYiIIOsb6tl52sxJfVHnWxMmhheSChjIzsKzay0oqmAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
                           }
                         ],
                         "tag": 121
-                      }
-                    },
-                    {
-                      "constr": {
-                        "fields": [
-                          {
-                            "bigInt": {
-                              "int": "0"
-                            }
-                          },
-                          {
-                            "boundedBytes": "wOPretQz03NjpzLaAutsGZ8m0t0XThuFiSGpwCref3I="
-                          },
-                          {
-                            "boundedBytes": "gmkYPWdJPyF6vTjP12LuGb0ubQ4uvbwNUuEpnGzFM/g="
-                          }
-                        ],
-                        "tag": 123
                       }
                     }
                   ]
@@ -419,58 +419,18 @@
         "purpose": "REDEEMER_PURPOSE_SPEND"
       },
       "txHash": "gIdIKa+yyzTiPSgtdjtBnibp+5dv6KcETuu99lMSFLc="
-    },
-    {
-      "redeemer": {
-        "datum": {
-          "constr": {
-            "fields": [
-              {
-                "constr": {
-                  "fields": [
-                    {
-                      "constr": {
-                        "fields": [
-                          {
-                            "boundedBytes": "/JP2imSL7DXT2Gqo+V7Jbx61NL9epFzg9HviF4KIdVw="
-                          }
-                        ],
-                        "tag": 121
-                      }
-                    },
-                    {
-                      "bigInt": {
-                        "int": "1"
-                      }
-                    }
-                  ],
-                  "tag": 121
-                }
-              },
-              {
-                "bigInt": {
-                  "int": "31349"
-                }
-              }
-            ],
-            "tag": 122
-          }
-        },
-        "purpose": "REDEEMER_PURPOSE_MINT"
-      },
-      "txHash": "gIdIKa+yyzTiPSgtdjtBnibp+5dv6KcETuu99lMSFLc="
     }
   ],
-  "successful": true,
+  "successful": True,
   "validity": {
-    "start": "133227636",
-    "ttl": "133227816"
+    "start": "133236969",
+    "ttl": "133237149"
   },
   "witnesses": {
     "vkeywitness": [
       {
-        "signature": "NoK0UEsaJcTVvyfAIB0DNYo4XJpwe4NWepEnM4i4AX3jebU420j0GLzyXGx/0t2E+S0dHU5dPDUM0InEO1rMBA==",
-        "vkey": "Gj/XhnWErVeReFVRBSBQKXjwdQ7mMVvEtj26W4VoeIk="
+        "signature": "P4gV4j6StjA3Cq7UYZ6HwvnJz4+CcHjLAtT+A7WH8I44ZPeh8JOTlRONodLaq6EFSqBBHozFdkF815YsgBwRBg==",
+        "vkey": "2BPE561YZV5QAYi21WdVLBVcpdysw+f97eg7FOdkvIE="
       }
     ]
   }

@@ -1,7 +1,4 @@
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 X_API_KEY = os.environ["X_API_KEY"]
 X_API_KEY_SECRET = os.environ["X_API_KEY_SECRET"]
