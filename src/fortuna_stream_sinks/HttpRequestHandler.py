@@ -39,23 +39,25 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
     @staticmethod
     def is_mint(post_body_json) -> bool:
-        if "outputs" not in post_body_json:
-            return False
-
-        outputs_datum = list(filter(lambda output: "datumHash" in output, post_body_json["outputs"]))
-
-        if len(outputs_datum) != 1:
-            return False
-
-        output_datum = outputs_datum[0]
-
         if "mint" not in post_body_json:
             return False
 
         mint_assets_policy = list(filter(lambda mint: mint["policyId"] == "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg==", post_body_json["mint"]))  # TODO decode to asset1up3fehe0dwpuj4awgcuvl0348vnsexd573fjgq
-
-        if len(mint_assets_policy) != 1 or "mintCoin" not in mint_assets_policy[0]:
+        if len(mint_assets_policy) != 1:
             return False
+
+        mint_assets = list(filter(lambda mint: mint["name"] == "VFVOQQ==", mint_assets_policy[0]["assets"]))
+        if len(mint_assets) != 1:
+            return False
+
+        if "outputs" not in post_body_json:
+            return False
+
+        outputs_datum = list(filter(lambda output: "datumHash" in output, post_body_json["outputs"]))
+        if len(outputs_datum) != 1:
+            return False
+
+        output_datum = outputs_datum[0]
 
         return "constr" in output_datum and \
             "fields" in output_datum["constr"] and \
