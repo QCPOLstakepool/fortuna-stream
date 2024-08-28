@@ -59,21 +59,22 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
         output_datum = outputs_datum[0]
 
-        return "constr" in output_datum and \
-            "fields" in output_datum["constr"] and \
-            len(output_datum["constr"]["fields"]) != 7 and \
-            "bigInt" in output_datum["constr"]["fields"][0] and \
-            "int" in output_datum["constr"]["fields"][0]["bigInt"] and \
-            "boundedBytes" in output_datum["constr"]["fields"][1] and \
-            "bigInt" in output_datum["constr"]["fields"][2] and \
-            "int" in output_datum["constr"]["fields"][2]["bigInt"] and \
-            "bigInt" in output_datum["constr"]["fields"][3] and \
-            "int" in output_datum["constr"]["fields"][3]["bigInt"] and \
-            "bigInt" in output_datum["constr"]["fields"][4] and \
-            "int" in output_datum["constr"]["fields"][4]["bigInt"] and \
-            "bigInt" in output_datum["constr"]["fields"][5] and \
-            "int" in output_datum["constr"]["fields"][5]["bigInt"] and \
-            "boundedBytes" in output_datum["constr"]["fields"][6]
+        return "datum" in output_datum and \
+            "constr" in output_datum["datum"] and \
+            "fields" in output_datum["datum"]["constr"] and \
+            len(output_datum["datum"]["constr"]["fields"]) == 7 and \
+            "bigInt" in output_datum["datum"]["constr"]["fields"][0] and \
+            "int" in output_datum["datum"]["constr"]["fields"][0]["bigInt"] and \
+            "boundedBytes" in output_datum["datum"]["constr"]["fields"][1] and \
+            "bigInt" in output_datum["datum"]["constr"]["fields"][2] and \
+            "int" in output_datum["datum"]["constr"]["fields"][2]["bigInt"] and \
+            "bigInt" in output_datum["datum"]["constr"]["fields"][3] and \
+            "int" in output_datum["datum"]["constr"]["fields"][3]["bigInt"] and \
+            "bigInt" in output_datum["datum"]["constr"]["fields"][4] and \
+            "int" in output_datum["datum"]["constr"]["fields"][4]["bigInt"] and \
+            "bigInt" in output_datum["datum"]["constr"]["fields"][5] and \
+            "int" in output_datum["datum"]["constr"]["fields"][5]["bigInt"] and \
+            "boundedBytes" in output_datum["datum"]["constr"]["fields"][6]
 
     @staticmethod
     def is_conversion(post_body_json) -> bool:
