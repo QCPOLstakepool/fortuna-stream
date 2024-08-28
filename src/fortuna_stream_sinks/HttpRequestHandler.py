@@ -45,21 +45,21 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
                 if len(mint_assets) == 1:
                     mint_asset_amount = int(mint_assets[0]["mintCoin"])
-        logger.debug(f"P={"outputs" in post_body_json}")
+        HttpRequestHandler.logger.debug(f"P={"outputs" in post_body_json}")
         if "outputs" in post_body_json:
             outputs = list(filter(lambda output: "assets" in output, post_body_json["outputs"]))
-            logger.debug(f"A={json.dumps(outputs)}")
+            HttpRequestHandler.logger.debug(f"A={json.dumps(outputs)}")
             for output in outputs:
                 outputs_assets = list(filter(lambda _output: "assets" in _output, output["assets"]))
-                logger.debug(f"B={json.dumps(outputs_assets)}")
+                HttpRequestHandler.logger.debug(f"B={json.dumps(outputs_assets)}")
                 for outputs_asset in outputs_assets:
                     outputs_assets_assets = list(filter(lambda _output: "name" in _output and _output["name"] == "VFVOQQ==", outputs_asset["assets"]))
-                    logger.debug(f"C={json.dumps(outputs_assets_assets)}")
+                    HttpRequestHandler.logger.debug(f"C={json.dumps(outputs_assets_assets)}")
                     if len(outputs_assets_assets) == 1:
-                        logger.debug(f"address={output["address"]}")
-                        logger.debug(f"address b64decode={base64.b64decode(output["address"])}")
-                        logger.debug(f"address hexlify={binascii.hexlify(base64.b64decode(output["address"]))}")
-                        logger.debug(f"address hexlify decode={binascii.hexlify(base64.b64decode(output["address"])).decode()}")
+                        HttpRequestHandler.logger.debug(f"address={output["address"]}")
+                        HttpRequestHandler.logger.debug(f"address b64decode={base64.b64decode(output["address"])}")
+                        HttpRequestHandler.logger.debug(f"address hexlify={binascii.hexlify(base64.b64decode(output["address"]))}")
+                        HttpRequestHandler.logger.debug(f"address hexlify decode={binascii.hexlify(base64.b64decode(output["address"])).decode()}")
                         address = Process.run("bech32", binascii.hexlify(base64.b64decode(output["address"])).decode())
                         break
 
