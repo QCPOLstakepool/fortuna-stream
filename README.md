@@ -9,7 +9,7 @@ mkdir $HOME/git
 
 ### apt
 ```
-sudo apt-get update -y && sudo apt-get install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools
+sudo apt-get update -y && sudo apt-get install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools libleveldb-dev
 ```
 
 ### Rust
@@ -19,6 +19,19 @@ source $HOME/.cargo/env
 rustup install stable
 rustup default stable
 rustup update
+```
+
+### bech32
+```
+cd $HOME/git
+git clone https://github.com/IntersectMBO/bech32.git
+cd bech32
+git fetch --all --recurse-submodules --tags
+cabal update
+cabal configure -O0 -w ghc-8.10.7
+rm -rf $HOME/git/bech32/dist-newstyle/build/x86_64-linux/ghc-8.10.7
+cabal build bech32
+sudo cp $(find $HOME/git/bech32/dist-newstyle/build -type f -name "bech32") /usr/local/bin/bech32
 ```
 
 ## Installation

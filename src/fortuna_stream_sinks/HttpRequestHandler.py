@@ -1,13 +1,14 @@
 import json
 import logging
 import os
+import base64
 from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI
 from fortuna_stream_sinks.config import X_API_KEY
 from fortuna_stream_sinks.config import X_API_KEY_SECRET
 from fortuna_stream_sinks.config import X_ACCESS_TOKEN
 from fortuna_stream_sinks.config import X_ACCESS_TOKEN_SECRET
-
+from fortuna_stream_sinks.Process import Process
 
 class HttpRequestHandler(BaseHTTPRequestHandler):
     logger = logging.getLogger("HttpRequestHandler")
@@ -50,13 +51,11 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                         filter(lambda _output: "name" in _output and _output["name"] == "VFVOQQ==",
                                outputs_asset["assets"]))
                     if len(outputs_assets_assets) == 1:
-                        address = output["address"]
+                        address = Process.run("bech32", base64.b64decode(output["address"]))
                         break
 
                 if address is not None:
                     break
-
-            # base64.b64decode(b"ARJkNwJiPjgBfujhK8gkEtiF+aqS1Z/6cqVvQjv2/OUHeM24LG7v8BLieA86neC0l8cEMRHfDcjz")
 
             outputs_datum = list(filter(lambda output: "datumHash" in output, post_body_json["outputs"]))
 
