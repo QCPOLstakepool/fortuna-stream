@@ -7,6 +7,7 @@ from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI
 from pycardano import VerificationKeyHash, Address, Network, ScriptHash
 
+from fortuna_stream_sinks.config import X_ENABLED
 from fortuna_stream_sinks.config import X_API_KEY
 from fortuna_stream_sinks.config import X_API_KEY_SECRET
 from fortuna_stream_sinks.config import X_ACCESS_TOKEN
@@ -15,7 +16,7 @@ from fortuna_stream_sinks.config import X_ACCESS_TOKEN_SECRET
 class HttpRequestHandler(BaseHTTPRequestHandler):
     logger = logging.getLogger("HttpRequestHandler")
     logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
-    x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="2")
+    x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="2") if X_ENABLED else None
 
     def do_POST(self):
         if self.path == "/api/events":
@@ -204,10 +205,12 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
     @staticmethod
     def send_tweet(message: str) -> None:
-        pass
-        #x_response = HttpRequestHandler.x_api.request("tweets", {"text": message}, method_override="POST")
+        if HttpRequestHandler.x_api is None:
+            HttpRequestHandler.logger.debug(f"X is disabled.")
+        else:
+            x_response = HttpRequestHandler.x_api.request("tweets", {"text": message}, method_override="POST")
 
-        #HttpRequestHandler.logger.debug(f"X response: {x_response.text}")
+            HttpRequestHandler.logger.debug(f"X response: {x_response.text}")
 
 
     def created(self):
