@@ -98,7 +98,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         mint_amount = HttpRequestHandler.get_mint_amount(post_body_json)
         block_number, leading_zeroes, difficulty = HttpRequestHandler.get_mint_data(post_body_json)
 
-        HttpRequestHandler.logger.info(f"Mint: number={block_number}, address={address}, amount={mint_amount}, leading zeroes={leading_zeroes}, difficulty={difficulty}")
+        HttpRequestHandler.logger.info(f"Mint: number={block_number}, miner={address}, amount={mint_amount}, leading zeroes={leading_zeroes}, difficulty={difficulty}")
 
         with open("pools.json", "r") as pools_file:
             pools = json.load(pools_file)
