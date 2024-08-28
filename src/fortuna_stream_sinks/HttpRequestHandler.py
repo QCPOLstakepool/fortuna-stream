@@ -45,7 +45,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
                 if len(mint_assets) == 1:
                     mint_asset_amount = int(mint_assets[0]["mintCoin"])
-
+        logger.debug(f"P={"outputs" in post_body_json}")
         if "outputs" in post_body_json:
             outputs = list(filter(lambda output: "assets" in output, post_body_json["outputs"]))
             logger.debug(f"A={json.dumps(outputs)}")
