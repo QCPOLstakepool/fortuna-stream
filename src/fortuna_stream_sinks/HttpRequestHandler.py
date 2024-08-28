@@ -3,7 +3,6 @@ import logging
 import os
 import base64
 import binascii
-import sys
 from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI
 from pycardano import VerificationKeyHash, Address, Network, ScriptHash
@@ -121,8 +120,6 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
         message = f"{address} converted {conversion_amount / 100000000} V1 $TUNA."
         HttpRequestHandler.send_tweet(message)
-
-        sys.exit()
 
     @staticmethod
     def get_mint_miner_address(post_body_json) -> str:
