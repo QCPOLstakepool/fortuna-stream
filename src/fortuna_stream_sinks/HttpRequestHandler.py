@@ -24,6 +24,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
         HttpRequestHandler.logger.debug(post_body_json)
 
+        address = None
         mint_asset_amount = -1
         block_number = -1
         leading_zeroes = -1
@@ -39,6 +40,22 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                     mint_asset_amount = int(mint_assets[0]["mintCoin"])
 
         if "outputs" in post_body_json:
+            outputs = list(filter(lambda output: "assets" in output, post_body_json["outputs"]))
+            for output in outputs:
+                outputs_assets = list(filter(lambda _output: "assets" in _output, output["assets"]))
+                for outputs_asset in outputs_assets:
+                    outputs_assets_assets = list(
+                        filter(lambda _output: "name" in _output and _output["name"] == "VFVOQQ==",
+                               outputs_asset["assets"]))
+                    if len(outputs_assets_assets) == 1:
+                        address = output["address"]
+                        break
+
+                if address is not None:
+                    break
+
+            # base64.b64decode(b"ARJkNwJiPjgBfujhK8gkEtiF+aqS1Z/6cqVvQjv2/OUHeM24LG7v8BLieA86neC0l8cEMRHfDcjz")
+
             outputs_datum = list(filter(lambda output: "datumHash" in output, post_body_json["outputs"]))
 
             if len(outputs_datum) == 1:
@@ -48,8 +65,10 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                     difficulty = int(outputs_datum[0]["datum"]["constr"]["fields"][4]["bigInt"]["int"])
 
         if mint_asset_amount > 0 and block_number > 0:
-            HttpRequestHandler.logger.info(f"Block {block_number} mined by (rewards: {mint_asset_amount})")
-            x_response = HttpRequestHandler.x_api.request("tweets", {"text": f"New block mined: {block_number}. Rewards: {mint_asset_amount / 100000000} $TUNA."}, method_override="POST")
+            message = f"Block {block_number} mined by {address} (rewards: {mint_asset_amount / 100000000})"
+            HttpRequestHandler.logger.info(message)
+
+            x_response = HttpRequestHandler.x_api.request("tweets", {"text": message}, method_override="POST")
 
             HttpRequestHandler.logger.debug(f"X response: {x_response.text}")
 
