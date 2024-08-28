@@ -60,7 +60,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                         HttpRequestHandler.logger.debug(f"address b64decode={base64.b64decode(output["address"])}")
                         HttpRequestHandler.logger.debug(f"address hexlify={binascii.hexlify(base64.b64decode(output["address"]))}")
                         HttpRequestHandler.logger.debug(f"address hexlify decode={binascii.hexlify(base64.b64decode(output["address"])).decode()}")
-                        address = Process.run("bech32", binascii.hexlify(base64.b64decode(output["address"])).decode())
+                        address = Process.run("bech32 addr1", binascii.hexlify(base64.b64decode(output["address"])).decode())
                         break
 
                 if address is not None:
