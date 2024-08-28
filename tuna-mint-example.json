@@ -421,7 +421,7 @@
       "txHash": "gIdIKa+yyzTiPSgtdjtBnibp+5dv6KcETuu99lMSFLc="
     }
   ],
-  "successful": True,
+  "successful": true,
   "validity": {
     "start": "133236969",
     "ttl": "133237149"

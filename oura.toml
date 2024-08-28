@@ -24,4 +24,4 @@ predicate = "asset1up3fehe0dwpuj4awgcuvl0348vnsexd573fjgq"
 
 [sink]
 type = "WebHook"
-url = "http://127.0.0.1:30513/api/mints"
+url = "http://127.0.0.1:30513/api/events"
