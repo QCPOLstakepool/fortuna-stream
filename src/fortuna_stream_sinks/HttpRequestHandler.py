@@ -61,7 +61,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
             outputs_datum = list(filter(lambda output: "datumHash" in output, post_body_json["outputs"]))
 
             if len(outputs_datum) == 1:
-                if "datum" in outputs_datum[0] and "constr" in outputs_datum[0]["datum"] and "fields" in outputs_datum[0]["datum"]["constr"]:
+                if "datum" in outputs_datum[0] and "constr" in outputs_datum[0]["datum"] and "fields" in outputs_datum[0]["datum"]["constr"] and "bigInt" in outputs_datum[0]["datum"]["constr"]["fields"][0]:
                     block_number = int(outputs_datum[0]["datum"]["constr"]["fields"][0]["bigInt"]["int"])
                     leading_zeroes = int(outputs_datum[0]["datum"]["constr"]["fields"][3]["bigInt"]["int"])
                     difficulty = int(outputs_datum[0]["datum"]["constr"]["fields"][4]["bigInt"]["int"])
