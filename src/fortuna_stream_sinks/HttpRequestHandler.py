@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI
 from fortuna_stream_sinks.config import X_API_KEY
@@ -10,6 +11,7 @@ from fortuna_stream_sinks.config import X_ACCESS_TOKEN_SECRET
 
 class HttpRequestHandler(BaseHTTPRequestHandler):
     logger = logging.getLogger("HttpRequestHandler")
+    logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
     x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="2")
 
     def do_POST(self):

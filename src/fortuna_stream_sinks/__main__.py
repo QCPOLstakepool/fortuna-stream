@@ -2,7 +2,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import logging
-import os
 import typer
 from http.server import HTTPServer
 from fortuna_stream_sinks.HttpRequestHandler import HttpRequestHandler
@@ -10,7 +9,6 @@ from fortuna_stream_sinks.HttpRequestHandler import HttpRequestHandler
 logging.basicConfig(
     format="%(asctime)s - %(name)-8s - %(levelname)-8s - %(message)s",
     datefmt="%d-%b-%y %H:%M:%S",
-    level=os.environ.get("LOG_LEVEL", "INFO"),
 )
 
 def main(host: str, port: int):
