@@ -5,7 +5,7 @@ import logging
 import os
 import typer
 from http.server import HTTPServer
-from fortuna_stream_sinks import HttpRequestHandler
+from fortuna_stream_sinks.HttpRequestHandler import HttpRequestHandler
 
 logging.basicConfig(
     format="%(asctime)s - %(name)-8s - %(levelname)-8s - %(message)s",

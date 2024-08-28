@@ -9,7 +9,7 @@ from fortuna_stream_sinks.config import X_ACCESS_TOKEN_SECRET
 
 
 class HttpRequestHandler(BaseHTTPRequestHandler):
-    logger = logging.getLogger("fortuna_stream_sinks")
+    logger = logging.getLogger("HttpRequestHandler")
     x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="2")
 
     def do_POST(self):
