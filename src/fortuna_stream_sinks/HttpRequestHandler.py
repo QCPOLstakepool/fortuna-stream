@@ -17,6 +17,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
     logger = logging.getLogger("HttpRequestHandler")
     logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
     x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="2") if X_ENABLED else None
+    message_queue = []
 
     def do_POST(self):
         if self.path == "/api/events":
@@ -26,17 +27,22 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
             HttpRequestHandler.logger.debug(post_body_json)
 
             if HttpRequestHandler.is_mint(post_body_json):
-                HttpRequestHandler.post_mint(post_body_json)
+                HttpRequestHandler.process_mint(post_body_json)
 
                 self.created()
             elif HttpRequestHandler.is_conversion(post_body_json):
-                HttpRequestHandler.post_conversion(post_body_json)
+                HttpRequestHandler.process_conversion(post_body_json)
 
                 self.created()
             else:
                 self.no_content()
+        elif self.path == "/api/events/queued/send":
+            HttpRequestHandler.send_queued_events()
+
+            self.created()
         else:
             self.not_found()
+
 
     @staticmethod
     def is_mint(post_body_json) -> bool:
@@ -93,7 +99,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         return not HttpRequestHandler.is_mint(post_body_json)
 
     @staticmethod
-    def post_mint(post_body_json):
+    def process_mint(post_body_json):
         address = HttpRequestHandler.get_mint_miner_address(post_body_json)
         mint_amount = HttpRequestHandler.get_mint_amount(post_body_json)
         block_number, leading_zeroes, difficulty = HttpRequestHandler.get_mint_data(post_body_json)
@@ -106,21 +112,41 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         pool = list(filter(lambda _pool: _pool["address"] == address, pools))
 
         if len(pool) == 1:
-            message = f"Block {block_number} mined by pool {pool[0]["name"]} ({pool[0]["website"]}) (rewards: {mint_amount / 100000000})."
+            message = f"Block {block_number} mined by pool {pool[0]["name"]}."
         else:
-            message = f"Block {block_number} mined by solo miner {address[:12]}...{address[-4:]} (rewards: {mint_amount / 100000000})."
+            message = f"Block {block_number} mined by solo {address[:12]}..{address[-4:]}."
 
-        HttpRequestHandler.send_tweet(message)
+        HttpRequestHandler.message_queue.append(message)
 
     @staticmethod
-    def post_conversion(post_body_json):
+    def process_conversion(post_body_json):
         address = HttpRequestHandler.get_conversion_output_address(post_body_json)
         conversion_amount = HttpRequestHandler.get_conversion_amount(post_body_json)
 
         HttpRequestHandler.logger.info(f"Conversion: address={address}, amount={conversion_amount}")
 
-        message = f"{address} converted {conversion_amount / 100000000} V1 $TUNA."
-        HttpRequestHandler.send_tweet(message)
+        message = f"{address[:12]}..{address[-4:]} converted {conversion_amount / 100000000} V1 $TUNA."
+
+        HttpRequestHandler.message_queue.append(message)
+
+    @staticmethod
+    def send_queued_events():
+        if len(HttpRequestHandler.message_queue) == 0:
+            return
+
+        x_post = ""
+
+        for message in reversed(HttpRequestHandler.message_queue):
+            x_post += message + "\n"
+
+        x_post = x_post[:-1]
+
+        if len(x_post) > 280:
+            x_post = x_post[0:277] + "..."
+
+        HttpRequestHandler.message_queue = []
+
+        HttpRequestHandler.send_x_post(x_post)
 
     @staticmethod
     def get_mint_miner_address(post_body_json) -> str:
@@ -204,7 +230,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         return "unknown address"
 
     @staticmethod
-    def send_tweet(message: str) -> None:
+    def send_x_post(message: str) -> None:
         if HttpRequestHandler.x_api is None:
             HttpRequestHandler.logger.debug(f"X is disabled.")
         else:
