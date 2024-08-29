@@ -236,7 +236,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         else:
             x_response: TwitterResponse = HttpRequestHandler.x_api.request("tweets", {"text": message}, method_override="POST")
 
-            HttpRequestHandler.logger.debug(f"X response headers: {json.dumps(x_response.headers)}")
+            HttpRequestHandler.logger.debug(f"X response headers: {json.dumps(dict(x_response.headers))}")
             HttpRequestHandler.logger.debug(f"X response: {x_response.text}")
 
 
