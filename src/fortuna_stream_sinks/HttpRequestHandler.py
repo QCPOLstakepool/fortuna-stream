@@ -4,7 +4,7 @@ import os
 import base64
 import binascii
 from http.server import BaseHTTPRequestHandler
-from TwitterAPI import TwitterAPI
+from TwitterAPI import TwitterAPI, TwitterResponse
 from pycardano import VerificationKeyHash, Address, Network, ScriptHash
 
 from fortuna_stream_sinks.config import X_ENABLED
@@ -234,8 +234,9 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         if HttpRequestHandler.x_api is None:
             HttpRequestHandler.logger.debug(f"X is disabled.")
         else:
-            x_response = HttpRequestHandler.x_api.request("tweets", {"text": message}, method_override="POST")
+            x_response: TwitterResponse = HttpRequestHandler.x_api.request("tweets", {"text": message}, method_override="POST")
 
+            HttpRequestHandler.logger.debug(f"X response headers: {json.dumps(x_response.headers)}")
             HttpRequestHandler.logger.debug(f"X response: {x_response.text}")
 
 
