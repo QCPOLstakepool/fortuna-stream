@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "fortuna_stream_sinks"
+version = "0.1.0"
+description = "Post to X about various events concerning TUNA"
+authors = ["QCPOLstakepool <qcpolstakepool@gmail.com>"]
+readme = "README.md"
+packages = [{include = "fortuna_stream_sinks", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+python-dotenv = "^1.0.1"
+typer = "^0.12.5"
+requests = "2.32.3"
+TwitterAPI = "2.8.2"
+pycardano = "0.11.1"
+setuptools = "74.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

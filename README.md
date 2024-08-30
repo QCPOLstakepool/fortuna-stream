@@ -9,7 +9,7 @@ mkdir $HOME/git
 
 ### apt
 ```
-sudo apt-get update -y && sudo apt-get install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools
+sudo apt-get update -y && sudo apt-get install -y automake build-essential pkg-config libffi-dev libgmp-dev libssl-dev libtinfo-dev libsystemd-dev zlib1g-dev make g++ tmux git jq wget libncursesw5 libtool autoconf musl-tools libleveldb-dev
 ```
 
 ### Rust
@@ -23,7 +23,6 @@ rustup update
 
 ## Installation
 ### Oura (2.0.0-alpha.2)
-#### Build from source
 ```
 cd $HOME/git
 git clone https://github.com/txpipe/oura.git
@@ -31,33 +30,28 @@ cd oura
 cargo install --path . --force
 ```
 
-#### Configuration
-Create file `$HOME/fortuna-stream/daemon.toml` with the following content (change `/home/relay/`):
+Run Oura with configuration: [oura.toml](oura.toml) 
+
+### Python (3.12)
 ```
-[source]
-type = "N2C"
-socket_path = "/home/relay/cardano-my-node/db/socket"
-min_depth = 6
-
-[intersect]
-type = "Point"
-value = [133071753, "ca0e667649146da8141fcb92a92ddccb5db841c6cf9a2b534f0bf00e92dc3185"]
-
-[cursor]
-type = "File"
-path = "/home/relay/fortuna-stream/oura.cursor"
-
-[[filters]]
-type = "SplitBlock"
-
-[[filters]]
-type = "ParseCbor"
-
-[[filters]]
-type = "Select"
-skip_uncertain = true
-predicate = "asset1up3fehe0dwpuj4awgcuvl0348vnsexd573fjgq"
-
-[sink]
-type = "Stdout"
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa                     (Press [ENTER])
+sudo apt update
+sudo apt install python3.12 python3.12-dev python3.12-venv     (Press [Y])
 ```
+
+#### Create venv
+```
+python3.12 -m venv .venv
+source .venv/bin/activate
+```
+
+### Cron
+Create cron: `0,30 * * * * curl -X POST http://127.0.0.1:30513/api/events/queued/send`
+
+#### Install
+`pip install -e .`
+
+#### Run
+`python -m fortuna_stream_sinks 127.0.0.1 30513`

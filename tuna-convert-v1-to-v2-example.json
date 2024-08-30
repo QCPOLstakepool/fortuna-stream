@@ -1,0 +1,196 @@
+{
+  "auxiliary": {},
+  "collateral": {
+    "collateral": [
+      {
+        "outputIndex": 2,
+        "redeemer": {
+          "datum": {
+            "constr": {
+              "fields": [
+                {
+                  "bigInt": {
+                    "int": "0"
+                  }
+                }
+              ],
+              "tag": 122
+            }
+          },
+          "purpose": "REDEEMER_PURPOSE_SPEND"
+        },
+        "txHash": "JtBDFOmZE4L4onOn6mlHCHQuMGEhPIJwxpSGpPKUW5U="
+      }
+    ],
+    "collateralReturn": {
+      "address": "Afp8qMloRG0J6DKafZe3A0qK/n0y66AmhaWzjfpozf4wSV4NkjSbYPRMSWfcN7XdcstV5s5nhQjw",
+      "coin": "41318358"
+    },
+    "totalCollateral": "373698"
+  },
+  "fee": "249132",
+  "hash": "dHWY6lbREQL89HfgxANR2lYQz+HYHi08oii7MQ17fJM=",
+  "inputs": [
+    {
+      "redeemer": {
+        "datum": {
+          "constr": {
+            "tag": 123
+          }
+        },
+        "purpose": "REDEEMER_PURPOSE_MINT"
+      },
+      "txHash": "ifdGhtcVWQ+Mu6K8zCbJtrh1ON1STclVprWNj//U6Rs="
+    },
+    {
+      "outputIndex": 2,
+      "redeemer": {
+        "datum": {
+          "constr": {
+            "fields": [
+              {
+                "bigInt": {
+                  "int": "0"
+                }
+              }
+            ],
+            "tag": 122
+          }
+        },
+        "purpose": "REDEEMER_PURPOSE_SPEND"
+      },
+      "txHash": "P29BZO/ZDGLOMs8dfsfxrgtQ3INQzpZLAsXCLNup18o="
+    },
+    {
+      "outputIndex": 1,
+      "txHash": "P29BZO/ZDGLOMs8dfsfxrgtQ3INQzpZLAsXCLNup18o="
+    }
+  ],
+  "mint": [
+    {
+      "assets": [
+        {
+          "mintCoin": "162600000000",
+          "name": "VFVOQQ=="
+        }
+      ],
+      "policyId": "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg=="
+    }
+  ],
+  "outputs": [
+    {
+      "address": "cTNEPWYTj5YJ6GtxT/W6NQcCrX1OR25MukDK5pY=",
+      "assets": [
+        {
+          "assets": [
+            {
+              "name": "VFVOQQ==",
+              "outputCoin": "14627800000000"
+            }
+          ],
+          "policyId": "J5+ELDPu2QVLnjxwzWo7MimCWcJLeLiVy0HZGg=="
+        },
+        {
+          "assets": [
+            {
+              "name": "bG9ja19zdGF0ZQ==",
+              "outputCoin": "1"
+            }
+          ],
+          "policyId": "M0Q9ZhOPlgnoa3FP9bo1BwKtfU5Hbky6QMrmlg=="
+        }
+      ],
+      "coin": "1340410",
+      "datum": {
+        "constr": {
+          "fields": [
+            {
+              "bigInt": {
+                "int": "30512"
+              }
+            },
+            {
+              "bigInt": {
+                "int": "14627800000000"
+              }
+            }
+          ],
+          "tag": 121
+        }
+      },
+      "datumHash": "0xmx54G6tO8Q6lLIHabaOAR7r2Wahq7TKn1wShovwXs="
+    },
+    {
+      "address": "Afp8qMloRG0J6DKafZe3A0qK/n0y66AmhaWzjfpozf4wSV4NkjSbYPRMSWfcN7XdcstV5s5nhQjw",
+      "assets": [
+        {
+          "assets": [
+            {
+              "name": "VFVOQQ==",
+              "outputCoin": "35835863"
+            }
+          ],
+          "policyId": "J5+ELDPu2QVLnjxwzWo7MimCWcJLeLiVy0HZGg=="
+        },
+        {
+          "assets": [
+            {
+              "name": "TVlJRUxE",
+              "outputCoin": "7522034"
+            }
+          ],
+          "policyId": "j5wyl30rrLh4NrZPeBHplzTGNoNzlY2iAXKvug=="
+        },
+        {
+          "assets": [
+            {
+              "name": "VFVOQQ==",
+              "outputCoin": "162600000000"
+            }
+          ],
+          "policyId": "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg=="
+        }
+      ],
+      "coin": "6855258"
+    }
+  ],
+  "referenceInputs": [
+    {
+      "redeemer": {
+        "datum": {
+          "constr": {
+            "tag": 123
+          }
+        },
+        "purpose": "REDEEMER_PURPOSE_MINT"
+      },
+      "txHash": "VYlwkRkiVKu+ZQG/T9Y/TZNG6cL1MAyt/L4s2iX9Y1E="
+    },
+    {
+      "redeemer": {
+        "datum": {
+          "constr": {
+            "tag": 123
+          }
+        },
+        "purpose": "REDEEMER_PURPOSE_MINT"
+      },
+      "txHash": "gIdIKa+yyzTiPSgtdjtBnibp+5dv6KcETuu99lMSFLc="
+    }
+  ],
+  "successful": true,
+  "validity": {},
+  "withdrawals": [
+    {
+      "rewardAccount": "8TNEPWYTj5YJ6GtxT/W6NQcCrX1OR25MukDK5pY="
+    }
+  ],
+  "witnesses": {
+    "vkeywitness": [
+      {
+        "signature": "RyXWaync8Uf+6ajege7xUJL5IRva96n/XwpES++bsDE2c6NtO4CJqrfxU0prBb43BpxswkOa9Tiy66RxyxyCDA==",
+        "vkey": "pgdzYsGMoHavZYqMwfzP2feGCBJvRkrdTN7fVdya3JI="
+      }
+    ]
+  }
+}
