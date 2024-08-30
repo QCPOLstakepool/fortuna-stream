@@ -28,7 +28,7 @@ class FortunaConversionEventHandler:
 
     @staticmethod
     def _get_conversion_output_address(post_body_json) -> str:
-        outputs = list(filter(lambda output: "assets" in output and FortunaConversionEventHandler.get_bech32_address(output["address"]) != "addr1wye5g0txzw8evz0gddc5lad6x5rs9ttaferkun96gr9wd9sj5y20t", post_body_json["outputs"]))
+        outputs = list(filter(lambda output: "assets" in output and Cardano.get_bech32_address(output["address"]) != "addr1wye5g0txzw8evz0gddc5lad6x5rs9ttaferkun96gr9wd9sj5y20t", post_body_json["outputs"]))
 
         for output in outputs:
             outputs_assets = list(filter(lambda _output: "assets" in _output and _output["policyId"] == "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg==", output["assets"]))
