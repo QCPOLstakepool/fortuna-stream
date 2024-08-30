@@ -47,6 +47,9 @@ python3.12 -m venv .venv
 source .venv/bin/activate
 ```
 
+### Cron
+Create cron: `0,30 * * * * curl -X POST http://127.0.0.1:30513/api/events/queued/send`
+
 #### Install
 `pip install -e .`
 

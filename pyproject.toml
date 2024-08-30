@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fortuna-stream-sinks"
+name = "fortuna_stream_sinks"
 version = "0.1.0"
 description = "Post to X about various events concerning TUNA"
 authors = ["QCPOLstakepool <qcpolstakepool@gmail.com>"]
