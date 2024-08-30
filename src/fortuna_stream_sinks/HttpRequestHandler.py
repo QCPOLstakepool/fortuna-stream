@@ -114,7 +114,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         if len(pool) == 1:
             message = f"Block {block_number} mined by pool {pool[0]["name"]}."
         else:
-            message = f"Block {block_number} mined by solo {address[:12]}..{address[-4:]}."
+            message = f"Block {block_number} mined by {address[:12]}..{address[-4:]}."
 
         HttpRequestHandler.message_queue.append(message)
 
@@ -139,7 +139,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         for message in reversed(HttpRequestHandler.message_queue):
             x_post += message + "\n"
 
-        x_post = x_post[:-1]
+        x_post = "In the last 30 minutes:\n" + x_post[:-1]
 
         if len(x_post) > 280:
             x_post = x_post[0:277] + "..."
