@@ -77,5 +77,5 @@ class FortunaMintEventHandler:
         outputs_datum = list(filter(lambda output: "datumHash" in output, post_body_json["outputs"]))
 
         return int(outputs_datum[0]["datum"]["constr"]["fields"][0]["bigInt"]["int"]), \
-            int(outputs_datum[0]["datum"]["constr"]["fields"][3]["bigInt"]["int"]), \
-            int(outputs_datum[0]["datum"]["constr"]["fields"][4]["bigInt"]["int"])
+            int(outputs_datum[0]["datum"]["constr"]["fields"][2]["bigInt"]["int"]), \
+            int(outputs_datum[0]["datum"]["constr"]["fields"][3]["bigInt"]["int"])
