@@ -1,4 +1,9 @@
+from functools import partial
+
 from dotenv import load_dotenv
+
+from fortuna_stream_sinks.Database import Database
+
 load_dotenv()
 
 import logging
@@ -12,7 +17,11 @@ logging.basicConfig(
 )
 
 def main(host: str, port: int):
-    server = HTTPServer((host, port), HttpRequestHandler)
+    database = Database("fortuna_stream.db")
+    database.migrate()
+
+    handler = partial(HttpRequestHandler, database)
+    server = HTTPServer((host, port), handler)
 
     try:
         server.serve_forever()

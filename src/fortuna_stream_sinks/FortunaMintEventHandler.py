@@ -1,5 +1,6 @@
 from fortuna_stream_sinks.Cardano import Cardano
-from fortuna_stream_sinks.FortunaBlockMintedEvent import FortunaBlockMintedEvent
+from fortuna_stream_sinks.FortunaBlock import FortunaBlock
+from fortuna_stream_sinks.Transaction import Transaction
 
 
 class FortunaMintEventHandler:
@@ -43,15 +44,16 @@ class FortunaMintEventHandler:
             "boundedBytes" in output_datum["datum"]["constr"]["fields"][6]
     
     @staticmethod
-    def process_mint(post_body_json) -> FortunaBlockMintedEvent:
-        address = FortunaMintEventHandler._get_mint_miner_address(post_body_json)
-        mint_amount = FortunaMintEventHandler._get_mint_amount(post_body_json)
-        block_number, leading_zeroes, difficulty = FortunaMintEventHandler._get_mint_data(post_body_json)
+    def process_mint(post_body_json) -> FortunaBlock:
+        transaction = Transaction(Cardano.get_transaction_hash(post_body_json["hash"]), post_body_json["validity"]["start"] if "start" in post_body_json["validity"] else -1, post_body_json["validity"]["ttl"] if "ttl" in post_body_json["validity"] else -1)
+        address = FortunaMintEventHandler._get_miner_address(post_body_json)
+        rewards = FortunaMintEventHandler._get_rewards(post_body_json)
+        block_number, leading_zeroes, difficulty = FortunaMintEventHandler._get_data(post_body_json)
 
-        return FortunaBlockMintedEvent(block_number, address, mint_amount, leading_zeroes, difficulty)
+        return FortunaBlock(transaction, block_number, address, rewards, leading_zeroes, difficulty)
 
     @staticmethod
-    def _get_mint_miner_address(post_body_json) -> str:
+    def _get_miner_address(post_body_json) -> str:
         outputs = list(filter(lambda output: "assets" in output, post_body_json["outputs"]))
 
         for output in outputs:
@@ -66,14 +68,14 @@ class FortunaMintEventHandler:
         return "unknown address"
 
     @staticmethod
-    def _get_mint_amount(post_body_json) -> int:
+    def _get_rewards(post_body_json) -> int:
         mint_assets_policy = list(filter(lambda mint: mint["policyId"] == "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg==", post_body_json["mint"]))  # TODO decode to asset1up3fehe0dwpuj4awgcuvl0348vnsexd573fjgq
         mint_assets = list(filter(lambda mint: mint["name"] == "VFVOQQ==", mint_assets_policy[0]["assets"]))  # TODO decode
 
         return int(mint_assets[0]["mintCoin"])
 
     @staticmethod
-    def _get_mint_data(post_body_json) -> (int, int, int):
+    def _get_data(post_body_json) -> (int, int, int):
         outputs_datum = list(filter(lambda output: "datumHash" in output, post_body_json["outputs"]))
 
         return int(outputs_datum[0]["datum"]["constr"]["fields"][0]["bigInt"]["int"]), \

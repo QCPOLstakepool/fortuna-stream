@@ -27,6 +27,7 @@ rustup update
 cd $HOME/git
 git clone https://github.com/txpipe/oura.git
 cd oura
+git checkout f5c1a82c6ed3af34acc6152fd8d6d3bc03e7c75d
 cargo install --path . --force
 ```
 
