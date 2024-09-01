@@ -110,8 +110,10 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
             address_block_numbers = list(map(lambda address_block: str(address_block.number), address_blocks))
             address_block_numbers_str = f"{address_block_numbers[0]}" if len(address_block_numbers) == 1 else f"{", ".join(address_block_numbers[:-1])} and {address_block_numbers[-1]}"
 
-            if address in pools:
-                x_post += f"Pool {pools[address]["name"]} mined block{"s" if len(blocks) > 1 else ""} {address_block_numbers_str}.\n"
+            pool = next(filter(lambda _pool: _pool["address"] == address, pools), None)
+
+            if pool is not None:
+                x_post += f"Pool {pool["name"]} mined block{"s" if len(blocks) > 1 else ""} {address_block_numbers_str}.\n"
             else:
                 x_post += f"Miner {address[:9]}..{address[-4:]} mined block{"s" if len(blocks) > 1 else ""} {address_block_numbers_str}.\n"
 
