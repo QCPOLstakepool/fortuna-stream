@@ -7,6 +7,7 @@ from fortuna_stream_sinks.Cardano import Cardano
 from fortuna_stream_sinks.FortunaBlock import FortunaBlock
 from fortuna_stream_sinks.FortunaConversion import FortunaConversion
 from fortuna_stream_sinks.FortunaConversionEventHandler import FortunaConversionEventHandler
+from fortuna_stream_sinks.FortunaDifficultyChange import FortunaDifficultyChange
 from fortuna_stream_sinks.FortunaMintEventHandler import FortunaMintEventHandler
 from fortuna_stream_sinks.Transaction import Transaction
 from fortuna_stream_sinks.config import X_ENABLED
@@ -74,9 +75,10 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
     def send_queued_events(self) -> None:
         blocks: list[FortunaBlock] = self.database.get_blocks_queued()
         conversions: list[FortunaConversion] = self.database.get_conversions_queued()
+        difficulty_changes: list[FortunaDifficultyChange] = self.database.get_difficulty_changes_queued()
         pools = {}
 
-        if len(blocks) == 0 and len(conversions) == 0:
+        if len(blocks) == 0 and len(conversions) == 0 and len(difficulty_changes) == 0:
             self.logger.debug("Nothing in queue to send.")
 
             return
@@ -89,6 +91,9 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
         if len(conversions) > 0:
             self.database.set_conversions_queued_off(conversions[0].transaction.hash)
+
+        if len(difficulty_changes) > 0:
+            self.database.set_difficulty_changes_queued_off(difficulty_changes[0].block_number)
 
         blocks_per_address = {}
         for block in blocks:
@@ -116,6 +121,9 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
                 x_post += f"Pool {pool["name"]} mined block{"s" if len(blocks) > 1 else ""} {address_block_numbers_str}.\n"
             else:
                 x_post += f"Miner {address[:9]}..{address[-4:]} mined block{"s" if len(blocks) > 1 else ""} {address_block_numbers_str}.\n"
+
+        for difficulty_change in difficulty_changes:
+            x_post += f"New difficulty: {difficulty_change.leading_zeroes} leading zeroes and {difficulty_change.difficulty} difficulty.\n"
 
         for address in conversions_per_address:
             x_post += f"{address[:9]}..{address[-4:]} converted {conversions_per_address[address]/100000000} $TUNA.\n"

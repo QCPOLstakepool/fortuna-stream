@@ -2,6 +2,7 @@ import os.path
 import sqlite3
 from fortuna_stream_sinks.FortunaBlock import FortunaBlock
 from fortuna_stream_sinks.FortunaConversion import FortunaConversion
+from fortuna_stream_sinks.FortunaDifficultyChange import FortunaDifficultyChange
 from fortuna_stream_sinks.Transaction import Transaction
 
 
@@ -17,6 +18,9 @@ class Database:
 
         if version < 1:
             self._migrate_to_v1()
+
+        if version < 2:
+            self._migrate_to_v2()
 
     def get_block(self, number: int) -> FortunaBlock | None:
         connection = None
@@ -86,7 +90,7 @@ class Database:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            cursor.execute("INSERT INTO difficulty_changes(block_number) VALUES(?)", (block_number,))
+            cursor.execute("INSERT INTO difficulty_changes(block_number, queued) VALUES(?, 1)", (block_number,))
 
             connection.commit()
         finally:
@@ -198,6 +202,42 @@ class Database:
         finally:
             self._close_connection(connection)
 
+    def get_difficulty_changes_queued(self) -> list[FortunaDifficultyChange]:
+        difficulty_changes: list[FortunaDifficultyChange] = []
+
+        connection = None
+
+        try:
+            connection = self._open_connection()
+
+            cursor = connection.cursor()
+            result = cursor.execute("SELECT b.number, b.leading_zeroes, b.difficulty FROM difficulty_changes AS dc JOIN blocks AS b ON b.number = dc.block_number WHERE dc.queued = 1 ORDER BY dc.rowid DESC")
+            rows = result.fetchall()
+
+            for row in rows:
+                difficulty_changes.append(FortunaDifficultyChange(
+                    row[0],
+                    row[1],
+                    row[2]
+                ))
+        finally:
+            self._close_connection(connection)
+
+        return difficulty_changes
+
+    def set_difficulty_changes_queued_off(self, block_number: int) -> None:
+        connection = None
+
+        try:
+            connection = self._open_connection()
+
+            cursor = connection.cursor()
+            cursor.execute("UPDATE difficulty_changes SET queued = 0 WHERE queued = 1 AND block_number <= ?", (block_number,))
+
+            connection.commit()
+        finally:
+            self._close_connection(connection)
+
     def _create_database(self) -> None:
         connection = None
 
@@ -259,6 +299,21 @@ class Database:
                            "amount INTEGER,"
                            "queued INTEGER, "
                            "FOREIGN KEY(transaction_hash) REFERENCES transactions(hash))")
+
+            connection.commit()
+        finally:
+            self._close_connection(connection)
+
+    def _migrate_to_v2(self) -> None:
+        connection = None
+
+        try:
+            connection = self._open_connection()
+
+            cursor = connection.cursor()
+            cursor.execute("ALTER TABLE difficulty_changes ADD COLUMN queued INTEGER")
+            cursor.execute("UPDATE difficulty_changes SET queued = 0")
+            cursor.execute("UPDATE version SET number = 2")
 
             connection.commit()
         finally:
