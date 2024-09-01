@@ -21,7 +21,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         self.database = database
         self.logger = logging.getLogger("HttpRequestHandler")
         self.logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
-        self.x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="2") if X_ENABLED else None
+        self.x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="2") if X_ENABLED == "true" else None
 
         super().__init__(*args, **kwargs)
 
