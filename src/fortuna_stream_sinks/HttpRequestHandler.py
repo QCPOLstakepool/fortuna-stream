@@ -31,9 +31,12 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
             self.logger.debug(post_body_json)
 
             if FortunaMintEventHandler.is_mint(post_body_json):
-                fortuna_block = FortunaMintEventHandler.process_mint(post_body_json)
+                fortuna_block: FortunaBlock = FortunaMintEventHandler.get_fortuna_block(post_body_json)
+                previous_fortuna_block: FortunaBlock = self.database.get_block(fortuna_block.number - 1)
 
                 self.database.insert_block(fortuna_block)
+                if previous_fortuna_block is None or previous_fortuna_block.leading_zeroes != fortuna_block.leading_zeroes or previous_fortuna_block.difficulty != fortuna_block.difficulty:
+                    self.database.insert_difficulty_change(fortuna_block.number)
 
                 self.logger.info(f"[Mint] Number={fortuna_block.number}, miner={fortuna_block.miner}, amount={fortuna_block.rewards}, leading zeroes={fortuna_block.leading_zeroes}, difficulty={fortuna_block.difficulty}")
 

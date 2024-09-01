@@ -18,6 +18,34 @@ class Database:
         if version < 1:
             self._migrate_to_v1()
 
+    def get_block(self, number: int) -> FortunaBlock | None:
+        connection = None
+
+        try:
+            connection = self._open_connection()
+
+            cursor = connection.cursor()
+            result = cursor.execute("SELECT b.number, b.miner, b.rewards, b.leading_zeroes, b.difficulty, t.hash, t.validity_from, t.validity_to FROM blocks AS b JOIN transactions AS t ON b.transaction_hash = t.hash WHERE b.number = ?", (number,))
+            row = result.fetchone()
+
+            if row is None:
+                return None
+
+            return FortunaBlock(
+                Transaction(
+                    row[5],
+                    row[6],
+                    row[7]
+                ),
+                row[0],
+                row[1],
+                row[2],
+                row[3],
+                row[4]
+            )
+        finally:
+            self._close_connection(connection)
+
     def insert_block(self, block: FortunaBlock) -> None:
         connection = None
 
@@ -29,6 +57,19 @@ class Database:
                            (block.transaction.hash, block.transaction.validity_from, block.transaction.validity_to))
             cursor.execute("INSERT INTO blocks(number, miner, rewards, leading_zeroes, difficulty, transaction_hash, posted_on_x) VALUES(?, ?, ?, ?, ?, ?, 0)",
                            (block.number, block.miner, block.rewards, block.leading_zeroes, block.difficulty, block.transaction.hash))
+
+            connection.commit()
+        finally:
+            self._close_connection(connection)
+
+    def insert_difficulty_change(self, block_number: int) -> None:
+        connection = None
+
+        try:
+            connection = self._open_connection()
+
+            cursor = connection.cursor()
+            cursor.execute("INSERT INTO difficulty_changes(block_number) VALUES(?)", (block_number,))
 
             connection.commit()
         finally:
@@ -183,6 +224,9 @@ class Database:
                            "transaction_hash TEXT, "
                            "posted_on_x INTEGER, "
                            "FOREIGN KEY(transaction_hash) REFERENCES transactions(hash))")
+            cursor.execute("CREATE TABLE difficulty_changes("
+                           "block_number INTEGER PRIMARY KEY, "
+                           "FOREIGN KEY(block_number) REFERENCES blocks(number))")
             cursor.execute("CREATE TABLE conversions("
                            "transaction_hash TEXT PRIMARY KEY, "
                            "from_version INTEGER,"
