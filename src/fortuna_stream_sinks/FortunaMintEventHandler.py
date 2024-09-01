@@ -1,3 +1,4 @@
+import json
 from fortuna_stream_sinks.Cardano import Cardano
 from fortuna_stream_sinks.FortunaBlock import FortunaBlock
 from fortuna_stream_sinks.Transaction import Transaction
@@ -5,7 +6,7 @@ from fortuna_stream_sinks.Transaction import Transaction
 
 class FortunaMintEventHandler:
     @staticmethod
-    def is_mint(post_body_json) -> bool:
+    def is_mint(post_body_json: dict) -> bool:
         if "mint" not in post_body_json:
             return False
 
@@ -44,8 +45,14 @@ class FortunaMintEventHandler:
             "boundedBytes" in output_datum["datum"]["constr"]["fields"][6]
     
     @staticmethod
-    def get_fortuna_block(post_body_json) -> FortunaBlock:
-        transaction = Transaction(Cardano.get_transaction_hash(post_body_json["hash"]), post_body_json["validity"]["start"] if "start" in post_body_json["validity"] else -1, post_body_json["validity"]["ttl"] if "ttl" in post_body_json["validity"] else -1)
+    def get_fortuna_block(post_body_json: dict) -> FortunaBlock:
+        transaction = Transaction(
+            Cardano.get_transaction_hash(post_body_json["hash"]),
+            post_body_json["validity"]["start"] if "start" in post_body_json["validity"] else -1,
+            post_body_json["validity"]["ttl"] if "ttl" in post_body_json["validity"] else -1,
+            Transaction.VERSION,
+            json.dumps(post_body_json)
+        )
         address = FortunaMintEventHandler._get_miner_address(post_body_json)
         rewards = FortunaMintEventHandler._get_rewards(post_body_json)
         block_number, leading_zeroes, difficulty = FortunaMintEventHandler._get_data(post_body_json)
@@ -53,7 +60,7 @@ class FortunaMintEventHandler:
         return FortunaBlock(transaction, block_number, address, rewards, leading_zeroes, difficulty)
 
     @staticmethod
-    def _get_miner_address(post_body_json) -> str:
+    def _get_miner_address(post_body_json: dict) -> str:
         outputs = list(filter(lambda output: "assets" in output, post_body_json["outputs"]))
 
         for output in outputs:
@@ -68,14 +75,14 @@ class FortunaMintEventHandler:
         return "unknown address"
 
     @staticmethod
-    def _get_rewards(post_body_json) -> int:
+    def _get_rewards(post_body_json: dict) -> int:
         mint_assets_policy = list(filter(lambda mint: mint["policyId"] == "yYH8mOdh47tErjXn2XrmIn9oS8tvUKY2dT2kjg==", post_body_json["mint"]))  # TODO decode to asset1up3fehe0dwpuj4awgcuvl0348vnsexd573fjgq
         mint_assets = list(filter(lambda mint: mint["name"] == "VFVOQQ==", mint_assets_policy[0]["assets"]))  # TODO decode
 
         return int(mint_assets[0]["mintCoin"])
 
     @staticmethod
-    def _get_data(post_body_json) -> (int, int, int):
+    def _get_data(post_body_json: dict) -> (int, int, int):
         outputs_datum = list(filter(lambda output: "datumHash" in output, post_body_json["outputs"]))
 
         return int(outputs_datum[0]["datum"]["constr"]["fields"][0]["bigInt"]["int"]), \

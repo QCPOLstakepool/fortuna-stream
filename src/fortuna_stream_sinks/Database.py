@@ -9,7 +9,7 @@ class Database:
     def __init__(self, path):
         self.path = path
 
-    def migrate(self):
+    def migrate(self) -> None:
         if not os.path.exists(self.path):
             self._create_database()
 
@@ -25,7 +25,7 @@ class Database:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            result = cursor.execute("SELECT b.number, b.miner, b.rewards, b.leading_zeroes, b.difficulty, t.hash, t.validity_from, t.validity_to FROM blocks AS b JOIN transactions AS t ON b.transaction_hash = t.hash WHERE b.number = ?", (number,))
+            result = cursor.execute("SELECT b.number, b.miner, b.rewards, b.leading_zeroes, b.difficulty, t.hash, t.validity_from, t.validity_to, t.version, t.raw_json FROM blocks AS b JOIN transactions AS t ON b.transaction_hash = t.hash WHERE b.number = ?", (number,))
             row = result.fetchone()
 
             if row is None:
@@ -35,7 +35,9 @@ class Database:
                 Transaction(
                     row[5],
                     row[6],
-                    row[7]
+                    row[7],
+                    row[8],
+                    row[9]
                 ),
                 row[0],
                 row[1],
@@ -46,17 +48,32 @@ class Database:
         finally:
             self._close_connection(connection)
 
-    def insert_block(self, block: FortunaBlock) -> None:
+    def insert_transaction(self, transaction: Transaction) -> None:
         connection = None
 
         try:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            cursor.execute("INSERT INTO transactions(hash, validity_from, validity_to) VALUES(?, ?, ?)",
-                           (block.transaction.hash, block.transaction.validity_from, block.transaction.validity_to))
-            cursor.execute("INSERT INTO blocks(number, miner, rewards, leading_zeroes, difficulty, transaction_hash, posted_on_x) VALUES(?, ?, ?, ?, ?, ?, 0)",
-                           (block.number, block.miner, block.rewards, block.leading_zeroes, block.difficulty, block.transaction.hash))
+            cursor.execute("INSERT INTO transactions(hash, validity_from, validity_to, version, raw_json) VALUES(?, ?, ?, ?, ?)",
+                           (transaction.hash, transaction.validity_from, transaction.validity_to, transaction.version, transaction.raw_json))
+
+            connection.commit()
+        finally:
+            self._close_connection(connection)
+
+    def insert_block(self, block: FortunaBlock) -> None:
+        transaction = block.transaction
+        connection = None
+
+        try:
+            connection = self._open_connection()
+
+            cursor = connection.cursor()
+            cursor.execute("INSERT INTO transactions(hash, validity_from, validity_to, version, raw_json) VALUES(?, ?, ?, ?, ?)",
+                           (transaction.hash, transaction.validity_from, transaction.validity_to, transaction.version, transaction.raw_json))
+            cursor.execute("INSERT INTO blocks(number, miner, rewards, leading_zeroes, difficulty, transaction_hash, queued) VALUES(?, ?, ?, ?, ?, ?, 1)",
+                           (block.number, block.miner, block.rewards, block.leading_zeroes, block.difficulty, transaction.hash))
 
             connection.commit()
         finally:
@@ -76,22 +93,23 @@ class Database:
             self._close_connection(connection)
 
     def insert_v1_to_v2_conversion(self, conversion: FortunaConversion) -> None:
+        transaction = conversion.transaction
         connection = None
 
         try:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            cursor.execute("INSERT INTO transactions(hash, validity_from, validity_to) VALUES(?, ?, ?)",
-                           (conversion.transaction.hash, conversion.transaction.validity_from, conversion.transaction.validity_to))
-            cursor.execute("INSERT INTO conversions(transaction_hash, address, amount, from_version, to_version, posted_on_x) VALUES(?, ?, ?, ?, ?, 0)",
-                           (conversion.transaction.hash, conversion.address, conversion.amount, conversion.from_version, conversion.to_version))
+            cursor.execute("INSERT INTO transactions(hash, validity_from, validity_to, version, raw_json) VALUES(?, ?, ?, ?, ?)",
+                           (transaction.hash, transaction.validity_from, transaction.validity_to, transaction.version, transaction.raw_json))
+            cursor.execute("INSERT INTO conversions(transaction_hash, address, amount, from_version, to_version, queued) VALUES(?, ?, ?, ?, ?, 1)",
+                           (transaction.hash, conversion.address, conversion.amount, conversion.from_version, conversion.to_version))
 
             connection.commit()
         finally:
             self._close_connection(connection)
 
-    def get_blocks_not_posted_on_x(self) -> list[FortunaBlock]:
+    def get_blocks_queued(self) -> list[FortunaBlock]:
         blocks: list[FortunaBlock] = []
 
         connection = None
@@ -100,7 +118,7 @@ class Database:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            result = cursor.execute("SELECT b.number, b.miner, b.rewards, b.leading_zeroes, b.difficulty, t.hash, t.validity_from, t.validity_to FROM blocks AS b JOIN transactions AS t ON b.transaction_hash = t.hash WHERE b.posted_on_x = 0 ORDER BY b.number DESC")
+            result = cursor.execute("SELECT b.number, b.miner, b.rewards, b.leading_zeroes, b.difficulty, t.hash, t.validity_from, t.validity_to, t.version, t.raw_json FROM blocks AS b JOIN transactions AS t ON b.transaction_hash = t.hash WHERE b.queued = 1 ORDER BY b.number DESC")
             rows = result.fetchall()
 
             for row in rows:
@@ -108,7 +126,9 @@ class Database:
                     Transaction(
                         row[5],
                         row[6],
-                        row[7]
+                        row[7],
+                        row[8],
+                        row[9]
                     ),
                     row[0],
                     row[1],
@@ -121,20 +141,20 @@ class Database:
 
         return blocks
 
-    def set_blocks_posted_on_x(self, number: int) -> None:
+    def set_blocks_queued_off(self, number: int) -> None:
         connection = None
 
         try:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            cursor.execute("UPDATE blocks SET posted_on_x = 1 WHERE posted_on_x = 0 AND number <= ?", (number,))
+            cursor.execute("UPDATE blocks SET queued = 0 WHERE queued = 1 AND number <= ?", (number,))
 
             connection.commit()
         finally:
             self._close_connection(connection)
 
-    def get_conversions_not_posted_on_x(self) -> list[FortunaConversion]:
+    def get_conversions_queued(self) -> list[FortunaConversion]:
         conversions: list[FortunaConversion] = []
 
         connection = None
@@ -143,7 +163,7 @@ class Database:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            result = cursor.execute("SELECT c.address, c.amount, c.from_version, c.to_version, t.hash, t.validity_from, t.validity_to FROM conversions AS c JOIN transactions AS t ON c.transaction_hash = t.hash WHERE c.posted_on_x = 0 ORDER BY c.rowid DESC")
+            result = cursor.execute("SELECT c.address, c.amount, c.from_version, c.to_version, t.hash, t.validity_from, t.validity_to, t.version, t.raw_json FROM conversions AS c JOIN transactions AS t ON c.transaction_hash = t.hash WHERE c.queued = 1 ORDER BY c.rowid DESC")
             rows = result.fetchall()
 
             for row in rows:
@@ -151,7 +171,9 @@ class Database:
                     Transaction(
                         row[4],
                         row[5],
-                        row[6]
+                        row[6],
+                        row[7],
+                        row[8]
                     ),
                     row[0],
                     row[1],
@@ -163,14 +185,14 @@ class Database:
 
         return conversions
 
-    def set_conversions_posted_on_x(self, transaction_hash: str) -> None:
+    def set_conversions_queued_off(self, transaction_hash: str) -> None:
         connection = None
 
         try:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            cursor.execute("UPDATE conversions SET posted_on_x = 1 WHERE posted_on_x = 0 AND rowid <= (SELECT rowid FROM conversions WHERE transaction_hash = ?)", (transaction_hash,))
+            cursor.execute("UPDATE conversions SET queued = 0 WHERE queued = 1 AND rowid <= (SELECT rowid FROM conversions WHERE transaction_hash = ?)", (transaction_hash,))
 
             connection.commit()
         finally:
@@ -214,7 +236,9 @@ class Database:
             cursor.execute("CREATE TABLE transactions("
                            "hash TEXT PRIMARY_KEY, "
                            "validity_from INTEGER, "
-                           "validity_to INTEGER)")
+                           "validity_to INTEGER,"
+                           "version INTEGER,"
+                           "raw_json TEXT)")
             cursor.execute("CREATE TABLE blocks("
                            "number INTEGER PRIMARY KEY, "
                            "miner TEXT, "
@@ -222,7 +246,7 @@ class Database:
                            "leading_zeroes INTEGER, "
                            "difficulty INTEGER, "
                            "transaction_hash TEXT, "
-                           "posted_on_x INTEGER, "
+                           "queued INTEGER, "
                            "FOREIGN KEY(transaction_hash) REFERENCES transactions(hash))")
             cursor.execute("CREATE TABLE difficulty_changes("
                            "block_number INTEGER PRIMARY KEY, "
@@ -233,7 +257,7 @@ class Database:
                            "to_version INTEGER,"
                            "address TEXT,"
                            "amount INTEGER,"
-                           "posted_on_x INTEGER, "
+                           "queued INTEGER, "
                            "FOREIGN KEY(transaction_hash) REFERENCES transactions(hash))")
 
             connection.commit()

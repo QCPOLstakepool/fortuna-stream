@@ -3,10 +3,12 @@ import logging
 import os
 from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI, TwitterResponse
+from fortuna_stream_sinks.Cardano import Cardano
 from fortuna_stream_sinks.FortunaBlock import FortunaBlock
 from fortuna_stream_sinks.FortunaConversion import FortunaConversion
 from fortuna_stream_sinks.FortunaConversionEventHandler import FortunaConversionEventHandler
 from fortuna_stream_sinks.FortunaMintEventHandler import FortunaMintEventHandler
+from fortuna_stream_sinks.Transaction import Transaction
 from fortuna_stream_sinks.config import X_ENABLED
 from fortuna_stream_sinks.config import X_API_KEY
 from fortuna_stream_sinks.config import X_API_KEY_SECRET
@@ -52,6 +54,15 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
             else:
                 self.logger.debug("Transaction type not supported.")
 
+                transaction = Transaction(Cardano.get_transaction_hash(post_body_json["hash"]),
+                    post_body_json["validity"]["start"] if "start" in post_body_json["validity"] else -1,
+                    post_body_json["validity"]["ttl"] if "ttl" in post_body_json["validity"] else -1,
+                    Transaction.VERSION,
+                    json.dumps(post_body_json)
+                )
+
+                self.database.insert_transaction(transaction)
+
                 self.no_content()
         elif self.path == "/api/events/queued/send":
             self.send_queued_events()
@@ -60,9 +71,9 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         else:
             self.not_found()
 
-    def send_queued_events(self):
-        blocks: list[FortunaBlock] = self.database.get_blocks_not_posted_on_x()
-        conversions: list[FortunaConversion] = self.database.get_conversions_not_posted_on_x()
+    def send_queued_events(self) -> None:
+        blocks: list[FortunaBlock] = self.database.get_blocks_queued()
+        conversions: list[FortunaConversion] = self.database.get_conversions_queued()
         pools = {}
 
         if len(blocks) == 0 and len(conversions) == 0:
@@ -71,13 +82,13 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
             return
 
         if len(blocks) > 0:
-            self.database.set_blocks_posted_on_x(blocks[0].number)
+            self.database.set_blocks_queued_off(blocks[0].number)
 
             with open("pools.json", "r") as pools_file:
                 pools = json.load(pools_file)
 
         if len(conversions) > 0:
-            self.database.set_conversions_posted_on_x(conversions[0].transaction.hash)
+            self.database.set_conversions_queued_off(conversions[0].transaction.hash)
 
         blocks_per_address = {}
         for block in blocks:
@@ -121,18 +132,18 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
             self.logger.debug(f"X response headers: {json.dumps(dict(x_response.headers))}")
             self.logger.debug(f"X response: {x_response.text}")
 
-    def created(self):
+    def created(self) -> None:
         self.send_response(201)
         self.end_headers()
 
-    def no_content(self):
+    def no_content(self) -> None:
         self.send_response(204)
         self.end_headers()
 
-    def not_found(self):
+    def not_found(self) -> None:
         self.send_response(404)
         self.end_headers()
 
-    def bad_request(self):
+    def bad_request(self) -> None:
         self.send_response(400)
         self.end_headers()
