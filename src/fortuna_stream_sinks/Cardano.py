@@ -1,9 +1,16 @@
 import base64
 import binascii
-from pycardano import ScriptHash, VerificationKeyHash, Address, Network
+from pycardano import ScriptHash, VerificationKeyHash, Address, Network, TransactionId
 
 
 class Cardano:
+    @staticmethod
+    def get_transaction_hash(transaction_hash_base64_encoded_bytes: str) -> str:
+        hash_bytes = base64.b64decode(transaction_hash_base64_encoded_bytes)
+        transaction = TransactionId(hash_bytes)
+
+        return str(transaction)
+
     @staticmethod
     def get_bech32_address(base64_encoded_hex: str) -> str:
         address_hex = binascii.hexlify(base64.b64decode(base64_encoded_hex)).decode()

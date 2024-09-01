@@ -1,6 +1,6 @@
 [source]
-type = "N2C"
-socket_path = "/home/relay/cardano-my-node/db/socket"
+type = "N2N"
+peers = ["192.168.0.110:6000"]
 min_depth = 6
 
 [intersect]
@@ -9,7 +9,7 @@ value = [133071753, "ca0e667649146da8141fcb92a92ddccb5db841c6cf9a2b534f0bf00e92d
 
 [cursor]
 type = "File"
-path = "/home/relay/fortuna-stream/oura.cursor"
+path = "oura.cursor"
 
 [[filters]]
 type = "SplitBlock"
