@@ -33,12 +33,12 @@ rustup default stable
 rustup update
 ```
 
-#### Oura (2.0.0-alpha.2)
+#### Oura (2.0.0-alpha.3)
 ```
 cd $HOME/git
 git clone https://github.com/txpipe/oura.git
 cd oura
-git checkout f5c1a82c6ed3af34acc6152fd8d6d3bc03e7c75d
+git checkout 4f32a6436b48994a4e1f303b0f628b3968d2b8bb
 cargo install --path . --force
 ```
 
