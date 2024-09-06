@@ -21,28 +21,29 @@ class FortunaMintEventHandler:
         if "outputs" not in post_body_json:
             return False
 
-        outputs_datum = list(filter(lambda output: "datumHash" in output, post_body_json["outputs"]))
+        outputs_datum = list(filter(lambda output: "datum" in output and "hash" in output["datum"], post_body_json["outputs"]))
         if len(outputs_datum) != 1:
             return False
 
         output_datum = outputs_datum[0]
 
         return "datum" in output_datum and \
-            "constr" in output_datum["datum"] and \
-            "fields" in output_datum["datum"]["constr"] and \
-            len(output_datum["datum"]["constr"]["fields"]) == 7 and \
-            "bigInt" in output_datum["datum"]["constr"]["fields"][0] and \
-            "int" in output_datum["datum"]["constr"]["fields"][0]["bigInt"] and \
-            "boundedBytes" in output_datum["datum"]["constr"]["fields"][1] and \
-            "bigInt" in output_datum["datum"]["constr"]["fields"][2] and \
-            "int" in output_datum["datum"]["constr"]["fields"][2]["bigInt"] and \
-            "bigInt" in output_datum["datum"]["constr"]["fields"][3] and \
-            "int" in output_datum["datum"]["constr"]["fields"][3]["bigInt"] and \
-            "bigInt" in output_datum["datum"]["constr"]["fields"][4] and \
-            "int" in output_datum["datum"]["constr"]["fields"][4]["bigInt"] and \
-            "bigInt" in output_datum["datum"]["constr"]["fields"][5] and \
-            "int" in output_datum["datum"]["constr"]["fields"][5]["bigInt"] and \
-            "boundedBytes" in output_datum["datum"]["constr"]["fields"][6]
+            "payload" in output_datum["datum"] and \
+            "constr" in output_datum["datum"]["payload"] and \
+            "fields" in output_datum["datum"]["payload"]["constr"] and \
+            len(output_datum["datum"]["payload"]["constr"]["fields"]) == 7 and \
+            "bigInt" in output_datum["datum"]["payload"]["constr"]["fields"][0] and \
+            "int" in output_datum["datum"]["payload"]["constr"]["fields"][0]["bigInt"] and \
+            "boundedBytes" in output_datum["datum"]["payload"]["constr"]["fields"][1] and \
+            "bigInt" in output_datum["datum"]["payload"]["constr"]["fields"][2] and \
+            "int" in output_datum["datum"]["payload"]["constr"]["fields"][2]["bigInt"] and \
+            "bigInt" in output_datum["datum"]["payload"]["constr"]["fields"][3] and \
+            "int" in output_datum["datum"]["payload"]["constr"]["fields"][3]["bigInt"] and \
+            "bigInt" in output_datum["datum"]["payload"]["constr"]["fields"][4] and \
+            "int" in output_datum["datum"]["payload"]["constr"]["fields"][4]["bigInt"] and \
+            "bigInt" in output_datum["datum"]["payload"]["constr"]["fields"][5] and \
+            "int" in output_datum["datum"]["payload"]["constr"]["fields"][5]["bigInt"] and \
+            "boundedBytes" in output_datum["datum"]["payload"]["constr"]["fields"][6]
     
     @staticmethod
     def get_fortuna_block(post_body_json: dict) -> FortunaBlock:
@@ -83,8 +84,8 @@ class FortunaMintEventHandler:
 
     @staticmethod
     def _get_data(post_body_json: dict) -> (int, int, int):
-        outputs_datum = list(filter(lambda output: "datumHash" in output, post_body_json["outputs"]))
+        outputs_datum = list(filter(lambda output: "datum" in output and "hash" in output["datum"], post_body_json["outputs"]))
 
-        return int(outputs_datum[0]["datum"]["constr"]["fields"][0]["bigInt"]["int"]), \
-            int(outputs_datum[0]["datum"]["constr"]["fields"][2]["bigInt"]["int"]), \
-            int(outputs_datum[0]["datum"]["constr"]["fields"][3]["bigInt"]["int"])
+        return int(outputs_datum[0]["datum"]["payload"]["constr"]["fields"][0]["bigInt"]["int"]), \
+            int(outputs_datum[0]["datum"]["payload"]["constr"]["fields"][2]["bigInt"]["int"]), \
+            int(outputs_datum[0]["datum"]["payload"]["constr"]["fields"][3]["bigInt"]["int"])
