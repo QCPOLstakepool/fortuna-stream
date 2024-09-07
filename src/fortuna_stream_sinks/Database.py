@@ -59,7 +59,7 @@ class Database:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            cursor.execute("INSERT INTO transactions(hash, validity_from, validity_to, version, raw_json) VALUES(?, ?, ?, ?, ?)",
+            cursor.execute("INSERT OR REPLACE INTO transactions(hash, validity_from, validity_to, version, raw_json) VALUES(?, ?, ?, ?, ?)",
                            (transaction.hash, transaction.validity_from, transaction.validity_to, transaction.version, transaction.raw_json))
 
             connection.commit()
@@ -74,9 +74,9 @@ class Database:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            cursor.execute("INSERT INTO transactions(hash, validity_from, validity_to, version, raw_json) VALUES(?, ?, ?, ?, ?)",
+            cursor.execute("INSERT OR REPLACE INTO transactions(hash, validity_from, validity_to, version, raw_json) VALUES(?, ?, ?, ?, ?)",
                            (transaction.hash, transaction.validity_from, transaction.validity_to, transaction.version, transaction.raw_json))
-            cursor.execute("INSERT INTO blocks(number, miner, rewards, leading_zeroes, difficulty, transaction_hash, queued) VALUES(?, ?, ?, ?, ?, ?, 1)",
+            cursor.execute("INSERT OR REPLACE INTO blocks(number, miner, rewards, leading_zeroes, difficulty, transaction_hash, queued) VALUES(?, ?, ?, ?, ?, ?, 1)",
                            (block.number, block.miner, block.rewards, block.leading_zeroes, block.difficulty, transaction.hash))
 
             connection.commit()
@@ -90,7 +90,7 @@ class Database:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            cursor.execute("INSERT INTO difficulty_changes(block_number, queued) VALUES(?, 1)", (block_number,))
+            cursor.execute("INSERT OR REPLACE INTO difficulty_changes(block_number, queued) VALUES(?, 1)", (block_number,))
 
             connection.commit()
         finally:
@@ -104,9 +104,9 @@ class Database:
             connection = self._open_connection()
 
             cursor = connection.cursor()
-            cursor.execute("INSERT INTO transactions(hash, validity_from, validity_to, version, raw_json) VALUES(?, ?, ?, ?, ?)",
+            cursor.execute("INSERT OR REPLACE INTO transactions(hash, validity_from, validity_to, version, raw_json) VALUES(?, ?, ?, ?, ?)",
                            (transaction.hash, transaction.validity_from, transaction.validity_to, transaction.version, transaction.raw_json))
-            cursor.execute("INSERT INTO conversions(transaction_hash, address, amount, from_version, to_version, queued) VALUES(?, ?, ?, ?, ?, 1)",
+            cursor.execute("INSERT OR REPLACE INTO conversions(transaction_hash, address, amount, from_version, to_version, queued) VALUES(?, ?, ?, ?, ?, 1)",
                            (transaction.hash, conversion.address, conversion.amount, conversion.from_version, conversion.to_version))
 
             connection.commit()
