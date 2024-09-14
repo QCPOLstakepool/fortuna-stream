@@ -24,6 +24,9 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         self.logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
         self.x_api = TwitterAPI(X_API_KEY, X_API_KEY_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET, api_version="2") if X_ENABLED == "true" else None
 
+        with open("pools.json", "r") as pools_file:
+            self.pools = json.load(pools_file)
+
         super().__init__(*args, **kwargs)
 
     def do_POST(self):
@@ -76,7 +79,6 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
         blocks: list[FortunaBlock] = self.database.get_blocks_queued()
         conversions: list[FortunaConversion] = self.database.get_conversions_queued()
         difficulty_changes: list[FortunaDifficultyChange] = self.database.get_difficulty_changes_queued()
-        pools = {}
 
         if len(blocks) == 0 and len(conversions) == 0 and len(difficulty_changes) == 0:
             self.logger.debug("Nothing in queue to send.")
@@ -85,9 +87,6 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
         if len(blocks) > 0:
             self.database.set_blocks_queued_off(blocks[0].number)
-
-            with open("pools.json", "r") as pools_file:
-                pools = json.load(pools_file)
 
         if len(conversions) > 0:
             self.database.set_conversions_queued_off(conversions[0].transaction.hash)
@@ -115,7 +114,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
             address_block_numbers = list(map(lambda address_block: str(address_block.number), address_blocks))
             address_block_numbers_str = f"{address_block_numbers[0]}" if len(address_block_numbers) == 1 else f"{", ".join(address_block_numbers[:-1])} and {address_block_numbers[-1]}"
 
-            pool = next(filter(lambda _pool: _pool["address"] == address, pools), None)
+            pool = next(filter(lambda _pool: _pool["address"] == address, self.pools), None)
 
             if pool is not None:
                 x_post += f"Pool {pool["name"]} mined block{"s" if len(blocks) > 1 else ""} {address_block_numbers_str}.\n"
