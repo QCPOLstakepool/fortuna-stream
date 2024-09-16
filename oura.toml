@@ -20,7 +20,12 @@ type = "ParseCbor"
 [[filters]]
 type = "Select"
 skip_uncertain = true
-predicate = "asset1up3fehe0dwpuj4awgcuvl0348vnsexd573fjgq"
+
+[filters.predicate]
+any = [
+    "asset1up3fehe0dwpuj4awgcuvl0348vnsexd573fjgq",                     # TUNA v2 asset
+    "addr1w8ax5k9mutg07p2ngscu3chsauktmstq92z9de938j8nqacprc9mw"        # SundaeSwap V3 order script (see dexes.json)
+]
 
 [sink]
 type = "WebHook"
