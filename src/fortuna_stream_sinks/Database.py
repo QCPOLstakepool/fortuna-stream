@@ -4,6 +4,7 @@ from fortuna_stream_sinks.FortunaBlock import FortunaBlock
 from fortuna_stream_sinks.FortunaConversion import FortunaConversion
 from fortuna_stream_sinks.FortunaDifficultyChange import FortunaDifficultyChange
 from fortuna_stream_sinks.Transaction import Transaction
+from fortuna_stream_sinks.events.FortunaSundaeSwapV3OrderBuy import FortunaSundaeSwapV3OrderBuy
 
 
 class Database:
@@ -21,6 +22,9 @@ class Database:
 
         if version < 2:
             self._migrate_to_v2()
+
+        if version < 3:
+            self._migrate_to_v3()
 
     def get_block(self, number: int) -> FortunaBlock | None:
         connection = None
@@ -108,6 +112,23 @@ class Database:
                            (transaction.hash, transaction.validity_from, transaction.validity_to, transaction.version, transaction.raw_json))
             cursor.execute("INSERT OR REPLACE INTO conversions(transaction_hash, address, amount, from_version, to_version, queued) VALUES(?, ?, ?, ?, ?, 1)",
                            (transaction.hash, conversion.address, conversion.amount, conversion.from_version, conversion.to_version))
+
+            connection.commit()
+        finally:
+            self._close_connection(connection)
+
+    def insert_sundae_v3_buy_order(self, buy_order: FortunaSundaeSwapV3OrderBuy) -> None:
+        transaction = buy_order.transaction
+        connection = None
+
+        try:
+            connection = self._open_connection()
+
+            cursor = connection.cursor()
+            cursor.execute("INSERT OR REPLACE INTO transactions(hash, validity_from, validity_to, version, raw_json) VALUES(?, ?, ?, ?, ?)",
+                           (transaction.hash, transaction.validity_from, transaction.validity_to, transaction.version, transaction.raw_json))
+            cursor.execute("INSERT OR REPLACE INTO sundae_v3_order_buy(transaction_hash, address, in_amount_lovelace, min_out_amount_tuna, queued) VALUES(?, ?, ?, ?, 1)",
+                           (transaction.hash, buy_order.address, buy_order.in_amount_lovelace, buy_order.min_out_amount_tuna))
 
             connection.commit()
         finally:
@@ -314,6 +335,33 @@ class Database:
             cursor.execute("ALTER TABLE difficulty_changes ADD COLUMN queued INTEGER")
             cursor.execute("UPDATE difficulty_changes SET queued = 0")
             cursor.execute("UPDATE version SET number = 2")
+
+            connection.commit()
+        finally:
+            self._close_connection(connection)
+
+    def _migrate_to_v3(self) -> None:
+        connection = None
+
+        try:
+            connection = self._open_connection()
+
+            cursor = connection.cursor()
+            cursor.execute("CREATE TABLE sundae_v3_order_buy("
+                           "transaction_hash TEXT PRIMARY KEY, "
+                           "address TEXT,"
+                           "in_amount_lovelace INTEGER,"
+                           "min_out_amount_tuna INTEGER,"
+                           "queued INTEGER, "
+                           "FOREIGN KEY(transaction_hash) REFERENCES transactions(hash))")
+            cursor.execute("CREATE TABLE sundae_v3_order_sell("
+                           "transaction_hash TEXT PRIMARY KEY, "
+                           "address TEXT,"
+                           "in_amount_tuna INTEGER,"
+                           "min_out_amount_lovelace INTEGER,"
+                           "queued INTEGER, "
+                           "FOREIGN KEY(transaction_hash) REFERENCES transactions(hash))")
+            cursor.execute("UPDATE version SET number = 3")
 
             connection.commit()
         finally:

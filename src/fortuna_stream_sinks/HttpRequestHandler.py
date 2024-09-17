@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import sys
 from http.server import BaseHTTPRequestHandler
 from TwitterAPI import TwitterAPI, TwitterResponse
 from fortuna_stream_sinks.Cardano import Cardano
@@ -9,6 +10,7 @@ from fortuna_stream_sinks.FortunaConversion import FortunaConversion
 from fortuna_stream_sinks.FortunaConversionEventHandler import FortunaConversionEventHandler
 from fortuna_stream_sinks.FortunaDifficultyChange import FortunaDifficultyChange
 from fortuna_stream_sinks.FortunaMintEventHandler import FortunaMintEventHandler
+from fortuna_stream_sinks.FortunaSwapEventHandler import FortunaSwapEventHandler
 from fortuna_stream_sinks.Transaction import Transaction
 from fortuna_stream_sinks.config import X_ENABLED
 from fortuna_stream_sinks.config import X_API_KEY
@@ -37,7 +39,7 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
             self.logger.debug(post_body_json)
 
             if FortunaMintEventHandler.is_mint(post_body_json):
-                fortuna_block: FortunaBlock = FortunaMintEventHandler.get_fortuna_block(post_body_json)
+                fortuna_block: FortunaBlock = FortunaMintEventHandler.get_minted_block(post_body_json)
                 previous_fortuna_block: FortunaBlock = self.database.get_block(fortuna_block.number - 1)
 
                 self.database.insert_block(fortuna_block)
@@ -48,11 +50,20 @@ class HttpRequestHandler(BaseHTTPRequestHandler):
 
                 self.created()
             elif FortunaConversionEventHandler.is_conversion(post_body_json):
-                fortuna_v1_to_v2_conversion = FortunaConversionEventHandler.process_conversion(post_body_json)
+                fortuna_v1_to_v2_conversion = FortunaConversionEventHandler.get_conversion(post_body_json)
 
                 self.database.insert_v1_to_v2_conversion(fortuna_v1_to_v2_conversion)
 
                 self.logger.info(f"[Conversion V1 -> V2] Address={fortuna_v1_to_v2_conversion.address}, amount={fortuna_v1_to_v2_conversion.amount}")
+
+                self.created()
+            elif FortunaSwapEventHandler.contains_sundae_v3_buy_order(post_body_json):  #  TODO handle ZAP ?
+                sundae_v3_buy_orders = FortunaSwapEventHandler.get_sundae_v3_buy_orders(post_body_json)
+
+                for sundae_v3_buy_order in sundae_v3_buy_orders:
+                    self.database.insert_sundae_v3_buy_order(sundae_v3_buy_order)
+
+                    self.logger.info(f"[SundaeSwap V3 Buy Order] Address={sundae_v3_buy_order.address}, in amount (lovelace)={sundae_v3_buy_order.in_amount_lovelace}, min out amount (tuna)={sundae_v3_buy_order.min_out_amount_tuna}")
 
                 self.created()
             else:

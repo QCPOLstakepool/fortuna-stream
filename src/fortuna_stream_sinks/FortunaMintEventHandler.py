@@ -46,7 +46,7 @@ class FortunaMintEventHandler:
             "boundedBytes" in output_datum["datum"]["payload"]["constr"]["fields"][6]
     
     @staticmethod
-    def get_fortuna_block(post_body_json: dict) -> FortunaBlock:
+    def get_minted_block(post_body_json: dict) -> FortunaBlock:
         transaction = Transaction(
             Cardano.get_transaction_hash(post_body_json["hash"]),
             post_body_json["validity"]["start"] if "start" in post_body_json["validity"] else -1,

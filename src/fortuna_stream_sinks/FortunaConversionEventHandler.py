@@ -22,7 +22,7 @@ class FortunaConversionEventHandler:
         return not FortunaMintEventHandler.is_mint(post_body_json)
     
     @staticmethod
-    def process_conversion(post_body_json: dict) -> FortunaConversion:
+    def get_conversion(post_body_json: dict) -> FortunaConversion:
         transaction = Transaction(
             Cardano.get_transaction_hash(post_body_json["hash"]),
             post_body_json["validity"]["start"] if "start" in post_body_json["validity"] else -1,
